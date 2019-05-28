@@ -14,6 +14,7 @@ public class PlayerScript : MonoBehaviour
 
 
     [SerializeField] private float normalSpeed = 7;
+    [SerializeField] private CanvasPlayerScript canvasPlayer;
     private float speed;
     private float maxStamina = 100;
     private float currentStamina;
@@ -23,14 +24,15 @@ public class PlayerScript : MonoBehaviour
     private float currentTimeState = 0;
     private Vector3 toMove = Vector3.zero;
     private Vector3 lastDirection = Vector3.zero;
+    private bool running = false;
 
-    private Rigidbody2D rigidBody;
+    private CharacterController characterController;
     private SpriteRenderer spriteRenderer;
     private Color startColor;
     // Start is called before the first frame update
     void Awake()
     {
-        rigidBody = GetComponent<Rigidbody2D>();
+        characterController = GetComponent<CharacterController>();
         spriteRenderer = GetComponent<SpriteRenderer>();
         startColor = spriteRenderer.color;
         currentStamina = maxStamina;
@@ -51,7 +53,6 @@ public class PlayerScript : MonoBehaviour
                 currentTimeState += Time.deltaTime;
                 if (currentTimeState >= 0.3f)
                     ChangeState(State.MOVING);
-                gameObject.transform.position += lastDirection * Time.deltaTime * speed;
 
                 break;
             case State.RUNING:
@@ -96,8 +97,9 @@ public class PlayerScript : MonoBehaviour
             case State.PUNCHING:
                 spriteRenderer.color = Color.red;
                 currentStamina -= costStaminaPerPunch;
+                canvasPlayer.ChangeStamina();
                 currentTimeState = 0;
-                speed = normalSpeed / 2;
+                speed = normalSpeed / 3;
                 currentTimePunch += Time.deltaTime;
                 break;
             case State.RUNING:
@@ -128,9 +130,12 @@ public class PlayerScript : MonoBehaviour
 
         toMove.Normalize();
         if (toMove.magnitude > 0)
+        {
             lastDirection = toMove;
+            gameObject.transform.rotation = Quaternion.LookRotation(gameObject.transform.forward, toMove);
+        }
 
-        gameObject.transform.position += toMove * Time.deltaTime * speed;
+        CollisionFlags collisionFlags = characterController.Move(toMove * Time.deltaTime * speed);
     }
 
     private void CheckVariablesUntilMoving()
@@ -144,5 +149,15 @@ public class PlayerScript : MonoBehaviour
     private bool CanPunch()
     {
         return currentTimePunch == 0 && currentStamina >= costStaminaPerPunch;
+    }
+
+    public float GetMaxStamina()
+    {
+        return maxStamina;
+    }
+
+    public float GetCurrentStamina()
+    {
+        return currentStamina;
     }
 }
