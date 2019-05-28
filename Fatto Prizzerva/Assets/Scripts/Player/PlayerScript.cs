@@ -10,15 +10,21 @@ public class PlayerScript : MonoBehaviour
     [SerializeField] private KeyCode downKey = KeyCode.S;
     [SerializeField] private KeyCode rightKey = KeyCode.D;
     [SerializeField] private KeyCode leftKey = KeyCode.A;
-    [SerializeField] private KeyCode runKey = KeyCode.LeftAlt;
+    [SerializeField] private KeyCode runKey = KeyCode.LeftShift;
 
 
     [SerializeField] private float normalSpeed = 7;
     [SerializeField] private CanvasPlayerScript canvasPlayer;
     private float speed;
-    private float maxStamina = 100;
+    public float maxStamina = 100;
     private float currentStamina;
-    private float costStaminaPerPunch = 2;
+    public float costStaminaPerPunch = 2;
+    public float costStaminaPerRunningSecond = 5;
+    public float recoverStaminaRunning = 0;
+    public float maxSpeed = 10f;
+    public float incrementSpeedSecond = 2f;
+    public float decreseSpeedSecond = 10f;
+    public float multiplyStaminaPerSpeed = 1f;
     private float currentTimePunch = 0;
     private float coolDownPunch = 0.75f;
     private float currentTimeState = 0;
@@ -56,19 +62,18 @@ public class PlayerScript : MonoBehaviour
 
                 break;
             case State.RUNING:
+                CheckVariablesUntilMoving();
+                if (currentStamina <= 0)
+                    ChangeState(State.MOVING);
+                Move();
                 break;
             case State.KNOCKBACK:
                 break;
             case State.HABILITY:
                 break;
         }
+        CheckStats();
 
-        if (currentTimePunch > 0 && currentState != State.PUNCHING)
-        {
-            currentTimePunch += Time.deltaTime;
-            if (currentTimePunch >= coolDownPunch)
-                currentTimePunch = 0;
-        }
     }
 
     private void ChangeState(State newState)
@@ -82,6 +87,7 @@ public class PlayerScript : MonoBehaviour
                 speed = normalSpeed;
                 break;
             case State.RUNING:
+                running = false;
                 break;
             case State.KNOCKBACK:
                 break;
@@ -99,10 +105,12 @@ public class PlayerScript : MonoBehaviour
                 currentStamina -= costStaminaPerPunch;
                 canvasPlayer.ChangeStamina();
                 currentTimeState = 0;
-                speed = normalSpeed / 3;
+                if(!running)
+                    speed = normalSpeed / 3;
                 currentTimePunch += Time.deltaTime;
                 break;
             case State.RUNING:
+                running = true;
                 currentTimeState = 0;
                 break;
             case State.KNOCKBACK:
@@ -131,8 +139,42 @@ public class PlayerScript : MonoBehaviour
         toMove.Normalize();
         if (toMove.magnitude > 0)
         {
-            lastDirection = toMove;
+            if (running)
+            {
+
+                toMove = (toMove / 10 + lastDirection).normalized;
+                lastDirection = toMove;
+                float value = Time.deltaTime * costStaminaPerRunningSecond * (speed - normalSpeed) * multiplyStaminaPerSpeed;
+                currentStamina -= value;
+                recoverStaminaRunning += value;
+                canvasPlayer.ChangeStamina();
+                if (speed < maxSpeed)
+                {
+                    speed += Time.deltaTime * incrementSpeedSecond;
+                    if (speed > maxSpeed)
+                        speed = maxSpeed;
+                }
+            }
+            else lastDirection = toMove;
             gameObject.transform.rotation = Quaternion.LookRotation(gameObject.transform.forward, toMove);
+
+        }
+        else
+        {
+            if (running)
+            {
+                toMove = lastDirection;
+                float otherValue = Time.deltaTime * costStaminaPerRunningSecond * (speed - normalSpeed) * multiplyStaminaPerSpeed;
+                currentStamina -= otherValue;
+                recoverStaminaRunning += otherValue;
+                canvasPlayer.ChangeStamina();
+                if (speed < maxSpeed)
+                {
+                    speed += Time.deltaTime * incrementSpeedSecond;
+                    if (speed > maxSpeed)
+                        speed = maxSpeed;
+                }
+            }
         }
 
         CollisionFlags collisionFlags = characterController.Move(toMove * Time.deltaTime * speed);
@@ -140,10 +182,20 @@ public class PlayerScript : MonoBehaviour
 
     private void CheckVariablesUntilMoving()
     {
-        if (Input.GetMouseButton(0) && CanPunch())
+        if (Input.GetMouseButton(0) && CanPunch() && !running)
+        {
             ChangeState(State.PUNCHING);
-        else if (Input.GetKey(runKey))
-            print("hacer que corra");
+            return;
+        }
+        if (Input.GetKey(runKey) && !running && currentStamina > 2)
+        {
+            ChangeState(State.RUNING);
+            return;
+        }
+        else if(Input.GetKeyUp(runKey))
+            ChangeState(State.MOVING);
+            
+
     }
 
     private bool CanPunch()
@@ -159,5 +211,50 @@ public class PlayerScript : MonoBehaviour
     public float GetCurrentStamina()
     {
         return currentStamina;
+    }
+
+    public float GetCurrentRecoverStamina()
+    {
+        return recoverStaminaRunning;
+    }
+
+    private void RecoverStamina()
+    {
+        float value = Time.deltaTime;
+        currentStamina += value;
+        recoverStaminaRunning -= value;
+
+        if (recoverStaminaRunning < 0)
+        {
+            currentStamina += recoverStaminaRunning;
+            recoverStaminaRunning = 0;
+        }
+        canvasPlayer.ChangeStamina();
+
+    }
+
+    private void CheckStats()
+    {
+        if (currentTimePunch > 0 && currentState != State.PUNCHING)
+        {
+            currentTimePunch += Time.deltaTime;
+            if (currentTimePunch >= coolDownPunch)
+                currentTimePunch = 0;
+        }
+
+        if (!running)
+        {
+            if (recoverStaminaRunning >= 0)
+            {
+                RecoverStamina();
+            }
+
+            if (speed > normalSpeed)
+            {
+                speed -= Time.deltaTime * decreseSpeedSecond;
+                if (speed < normalSpeed)
+                    speed = normalSpeed;
+            }
+        }
     }
 }
