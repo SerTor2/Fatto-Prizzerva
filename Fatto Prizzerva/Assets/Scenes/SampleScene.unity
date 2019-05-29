@@ -272,9 +272,10 @@ MonoBehaviour:
   costStaminaPerRunningSecond: 5
   recoverStaminaRunning: 0
   maxSpeed: 12
-  incrementSpeedSecond: 3
+  incrementSpeedSecond: 4
   decreseSpeedSecond: 15
   multiplyStaminaPerSpeed: 0.7
+  resistenceToGirRunning: 30
 --- !u!143 &71101551
 CharacterController:
   m_ObjectHideFlags: 0

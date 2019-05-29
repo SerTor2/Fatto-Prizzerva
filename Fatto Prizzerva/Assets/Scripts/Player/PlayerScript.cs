@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class PlayerScript : MonoBehaviour
 {
-    public enum State { MOVING, PUNCHING, RUNING, KNOCKBACK, HABILITY };
+    public enum State { MOVING, PUNCHING, RUNING, PUNCHRUNNING, KNOCKBACK, HABILITY };
     public State currentState = State.MOVING;
     [SerializeField] private KeyCode upKey = KeyCode.W;
     [SerializeField] private KeyCode downKey = KeyCode.S;
@@ -25,11 +25,13 @@ public class PlayerScript : MonoBehaviour
     public float incrementSpeedSecond = 2f;
     public float decreseSpeedSecond = 10f;
     public float multiplyStaminaPerSpeed = 1f;
+    public float resistenceToGirRunning = 30;
+    public float damageBase = 2;
     private float currentTimePunch = 0;
     private float coolDownPunch = 0.75f;
     private float currentTimeState = 0;
     private Vector3 toMove = Vector3.zero;
-    private Vector3 lastDirection = Vector3.zero;
+    private Vector3 lastDirection = Vector3.up;
     private bool running = false;
 
     private CharacterController characterController;
@@ -67,6 +69,12 @@ public class PlayerScript : MonoBehaviour
                     ChangeState(State.MOVING);
                 Move();
                 break;
+            case State.PUNCHRUNNING:
+                currentTimeState += Time.deltaTime;
+                PunchRunning();
+                if (currentTimeState >= 0.15f)
+                    ChangeState(State.MOVING);
+                break;
             case State.KNOCKBACK:
                 break;
             case State.HABILITY:
@@ -85,9 +93,16 @@ public class PlayerScript : MonoBehaviour
             case State.PUNCHING:
                 spriteRenderer.color = startColor;
                 speed = normalSpeed;
+                currentTimePunch += Time.deltaTime;
                 break;
             case State.RUNING:
                 running = false;
+                break;
+            case State.PUNCHRUNNING:
+                running = false;
+                spriteRenderer.color = startColor;
+                currentTimePunch += Time.deltaTime;
+                speed = normalSpeed;
                 break;
             case State.KNOCKBACK:
                 break;
@@ -105,13 +120,19 @@ public class PlayerScript : MonoBehaviour
                 currentStamina -= costStaminaPerPunch;
                 canvasPlayer.ChangeStamina();
                 currentTimeState = 0;
-                if(!running)
-                    speed = normalSpeed / 3;
-                currentTimePunch += Time.deltaTime;
+                speed = normalSpeed / 2;
                 break;
             case State.RUNING:
                 running = true;
                 currentTimeState = 0;
+                break;
+            case State.PUNCHRUNNING:
+                running = true;
+                spriteRenderer.color = Color.red;
+                currentStamina -= costStaminaPerPunch * (speed - normalSpeed);
+                canvasPlayer.ChangeStamina();
+                currentTimeState = 0;
+                speed = speed * 2;
                 break;
             case State.KNOCKBACK:
                 currentTimeState = 0;
@@ -141,19 +162,65 @@ public class PlayerScript : MonoBehaviour
         {
             if (running)
             {
-
-                toMove = (toMove / 10 + lastDirection).normalized;
-                lastDirection = toMove;
-                float value = Time.deltaTime * costStaminaPerRunningSecond * (speed - normalSpeed) * multiplyStaminaPerSpeed;
-                currentStamina -= value;
-                recoverStaminaRunning += value;
-                canvasPlayer.ChangeStamina();
-                if (speed < maxSpeed)
+                float magnitudVector = (lastDirection - toMove).magnitude;
+                if(magnitudVector == 0)
                 {
-                    speed += Time.deltaTime * incrementSpeedSecond;
-                    if (speed > maxSpeed)
-                        speed = maxSpeed;
+                    float value = Time.deltaTime * costStaminaPerRunningSecond * (speed - normalSpeed) * multiplyStaminaPerSpeed;
+                    currentStamina -= value;
+                    recoverStaminaRunning += value;
+                    canvasPlayer.ChangeStamina();
+                    if (speed < maxSpeed)
+                    {
+                        speed += Time.deltaTime * incrementSpeedSecond;
+                        if (speed > maxSpeed)
+                            speed = maxSpeed;
+                    }
                 }
+                else if(magnitudVector > 0 && magnitudVector < 1)
+                {
+                    toMove = (toMove / 30 + lastDirection).normalized;
+                    lastDirection = toMove;
+                    float secondvalue = Time.deltaTime * costStaminaPerRunningSecond * (speed - normalSpeed) * multiplyStaminaPerSpeed;
+                    currentStamina -= secondvalue;
+                    recoverStaminaRunning += secondvalue;
+                    canvasPlayer.ChangeStamina();
+                    if (speed > normalSpeed)
+                    {
+                        speed -= Time.deltaTime * incrementSpeedSecond / 4;
+                        if (speed > normalSpeed)
+                            speed = normalSpeed;
+                    }
+                }
+                else if(magnitudVector < 1.75f)
+                {
+                    toMove = (toMove / 30 + lastDirection).normalized;
+                    lastDirection = toMove;
+                    float secondvalue = Time.deltaTime * costStaminaPerRunningSecond * (speed - normalSpeed) * multiplyStaminaPerSpeed;
+                    currentStamina -= secondvalue;
+                    recoverStaminaRunning += secondvalue;
+                    canvasPlayer.ChangeStamina();
+                    if (speed > normalSpeed)
+                    {
+                        speed -= Time.deltaTime * incrementSpeedSecond / 2;
+                        if (speed > normalSpeed)
+                            speed = normalSpeed;
+                    }
+                }
+                else
+                {
+                    toMove = lastDirection;
+                    float otherValue = Time.deltaTime * costStaminaPerRunningSecond * (speed - normalSpeed) * multiplyStaminaPerSpeed;
+                    currentStamina -= otherValue;
+                    recoverStaminaRunning += otherValue;
+                    canvasPlayer.ChangeStamina();
+                    if (speed < maxSpeed)
+                    {
+                        speed += Time.deltaTime * incrementSpeedSecond;
+                        if (speed > maxSpeed)
+                            speed = maxSpeed;
+                    }
+                }
+
             }
             else lastDirection = toMove;
             gameObject.transform.rotation = Quaternion.LookRotation(gameObject.transform.forward, toMove);
@@ -180,6 +247,11 @@ public class PlayerScript : MonoBehaviour
         CollisionFlags collisionFlags = characterController.Move(toMove * Time.deltaTime * speed);
     }
 
+    private void PunchRunning()
+    {
+        CollisionFlags collisionFlags = characterController.Move(toMove * Time.deltaTime * speed );
+    }
+
     private void CheckVariablesUntilMoving()
     {
         if (Input.GetMouseButton(0) && CanPunch() && !running)
@@ -194,6 +266,8 @@ public class PlayerScript : MonoBehaviour
         }
         else if(Input.GetKeyUp(runKey))
             ChangeState(State.MOVING);
+        if (Input.GetKey(runKey) && running && CanPunchRunning() && speed > normalSpeed + 1 && Input.GetMouseButton(0))
+            ChangeState(State.PUNCHRUNNING);
             
 
     }
@@ -201,6 +275,11 @@ public class PlayerScript : MonoBehaviour
     private bool CanPunch()
     {
         return currentTimePunch == 0 && currentStamina >= costStaminaPerPunch;
+    }
+
+    private bool CanPunchRunning()
+    {
+        return currentStamina >= costStaminaPerPunch * (speed - normalSpeed);
     }
 
     public float GetMaxStamina()
@@ -256,5 +335,14 @@ public class PlayerScript : MonoBehaviour
                     speed = normalSpeed;
             }
         }
+    }
+
+    private void OnControllerColliderHit(ControllerColliderHit hit)
+    {
+        if(currentState == State.PUNCHING)
+            print(damageBase * speed);
+        if(currentState == State.PUNCHRUNNING)
+            print(damageBase * speed / 2);
+
     }
 }
