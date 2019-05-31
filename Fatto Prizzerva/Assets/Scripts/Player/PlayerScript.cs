@@ -339,10 +339,15 @@ public class PlayerScript : MonoBehaviour
 
     private void OnControllerColliderHit(ControllerColliderHit hit)
     {
-        if(currentState == State.PUNCHING)
-            print(damageBase * speed);
-        if(currentState == State.PUNCHRUNNING)
-            print(damageBase * speed / 2);
+        if(hit.gameObject.tag == "Enemie")
+        {
+            if (currentState == State.PUNCHING)
+                hit.gameObject.GetComponent<EnemieBasic>().MoveDirectionHit((hit.gameObject.transform.position - gameObject.transform.position).normalized, damageBase * speed);
+            if (currentState == State.PUNCHRUNNING)
+                hit.gameObject.GetComponent<EnemieBasic>().MoveDirectionHit((hit.gameObject.transform.position - gameObject.transform.position).normalized, damageBase * speed / 2);
+            ChangeState(State.MOVING);
+        }
+
 
     }
 }
