@@ -62,6 +62,7 @@
   <ItemGroup>
     <Compile Include="Assets\Scripts\Canvas\CanvasPlayerScript.cs" />
     <Compile Include="Assets\Scripts\Enemie\EnemieBasic.cs" />
+    <Compile Include="Assets\Scripts\Enviroment\PlantaCatapulta.cs" />
     <Compile Include="Assets\Scripts\Player\PlayerScript.cs" />
     <Reference Include="Unity.TextMeshPro.Editor">
       <HintPath>D:/Sergio Torres Rodriguez/Git/Fatto-Prizzerva/Fatto Prizzerva/Library/ScriptAssemblies/Unity.TextMeshPro.Editor.dll</HintPath>

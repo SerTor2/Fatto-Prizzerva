@@ -31,7 +31,8 @@ public class EnemieBasic : MonoBehaviour
         }
         else
         {
-            characterController.Move((player.gameObject.transform.position - gameObject.transform.position).normalized * speed * Time.deltaTime);
+            if(player.gameObject.activeSelf)
+                characterController.Move((player.gameObject.transform.position - gameObject.transform.position).normalized * speed * Time.deltaTime);
         }
     }
 

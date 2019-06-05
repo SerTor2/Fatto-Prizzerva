@@ -4,13 +4,15 @@ using UnityEngine;
 
 public class PlayerScript : MonoBehaviour
 {
-    public enum State { MOVING, PUNCHING, RUNING, PUNCHRUNNING, KNOCKBACK, HABILITY };
+    public enum State { MOVING, PUNCHING, RUNING, PUNCHRUNNING, KNOCKBACK, FLYINGKICK, HABILITY };
     public State currentState = State.MOVING;
     [SerializeField] private KeyCode upKey = KeyCode.W;
     [SerializeField] private KeyCode downKey = KeyCode.S;
     [SerializeField] private KeyCode rightKey = KeyCode.D;
     [SerializeField] private KeyCode leftKey = KeyCode.A;
     [SerializeField] private KeyCode runKey = KeyCode.LeftShift;
+
+    [SerializeField] private LayerMask layerMask;
 
 
     [SerializeField] private float normalSpeed = 7;
@@ -75,6 +77,12 @@ public class PlayerScript : MonoBehaviour
                 if (currentTimeState >= 0.15f)
                     ChangeState(State.MOVING);
                 break;
+            case State.FLYINGKICK:
+                currentTimeState += Time.deltaTime;
+                MoveFlyKick();
+                if (currentTimeState >= 0.15f)
+                    ChangeState(State.MOVING);
+                break;
             case State.KNOCKBACK:
                 break;
             case State.HABILITY:
@@ -84,7 +92,7 @@ public class PlayerScript : MonoBehaviour
 
     }
 
-    private void ChangeState(State newState)
+    public void ChangeState(State newState)
     {
         switch (currentState)
         {
@@ -105,6 +113,10 @@ public class PlayerScript : MonoBehaviour
                 speed = normalSpeed;
                 break;
             case State.KNOCKBACK:
+                break;
+            case State.FLYINGKICK:
+                spriteRenderer.color = startColor;
+                speed = normalSpeed;
                 break;
             case State.HABILITY:
                 break;
@@ -132,9 +144,14 @@ public class PlayerScript : MonoBehaviour
                 currentStamina -= costStaminaPerPunch * (speed - normalSpeed);
                 canvasPlayer.ChangeStamina();
                 currentTimeState = 0;
-                speed = speed * 2;
+                speed = normalSpeed * 2;
                 break;
             case State.KNOCKBACK:
+                currentTimeState = 0;
+                break;
+            case State.FLYINGKICK:
+                speed = normalSpeed * 3f;
+                spriteRenderer.color = Color.red;
                 currentTimeState = 0;
                 break;
             case State.HABILITY:
@@ -268,7 +285,9 @@ public class PlayerScript : MonoBehaviour
             ChangeState(State.MOVING);
         if (Input.GetKey(runKey) && running && CanPunchRunning() && speed > normalSpeed + 1 && Input.GetMouseButton(0))
             ChangeState(State.PUNCHRUNNING);
-            
+
+        if (Input.GetMouseButton(1) && currentState.Equals(State.MOVING))
+            OnActionButton();
 
     }
 
@@ -343,11 +362,41 @@ public class PlayerScript : MonoBehaviour
         {
             if (currentState == State.PUNCHING)
                 hit.gameObject.GetComponent<EnemieBasic>().MoveDirectionHit((hit.gameObject.transform.position - gameObject.transform.position).normalized, damageBase * speed);
-            if (currentState == State.PUNCHRUNNING)
+            if (currentState == State.PUNCHRUNNING || currentState == State.FLYINGKICK)
                 hit.gameObject.GetComponent<EnemieBasic>().MoveDirectionHit((hit.gameObject.transform.position - gameObject.transform.position).normalized, damageBase * speed / 2);
             ChangeState(State.MOVING);
         }
 
 
+    }
+
+    private void OnActionButton()
+    {
+        RaycastHit rayHit;
+        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+        if (Physics.Raycast(Camera.main.transform.position, ray.direction, out rayHit, 25, layerMask))
+        {
+            if((rayHit.collider.transform.position - gameObject.transform.position).magnitude <= 3)
+            {
+                if (rayHit.collider.gameObject.GetComponent<PlantaCatapulta>() != null)
+                {
+                    rayHit.collider.gameObject.GetComponent<PlantaCatapulta>().EnterInThePlant(this);
+                }
+
+            }
+            
+        }
+    }
+
+    public void StartFlyKick(Vector3 _direction)
+    {
+        lastDirection = _direction;
+        gameObject.transform.rotation = Quaternion.LookRotation(gameObject.transform.forward, _direction);
+        ChangeState(State.FLYINGKICK);
+    }
+
+    private void MoveFlyKick()
+    {
+        characterController.Move(lastDirection * Time.deltaTime * speed);
     }
 }
