@@ -35,18 +35,27 @@ public class PlayerScript : MonoBehaviour
     private Vector3 toMove = Vector3.zero;
     private Vector3 lastDirection = Vector3.up;
     private bool running = false;
+    private bool onGround = false;
+    private float gravity = 30;
+    private float verticalSpeed = 0;
+    private GameObject myCamera;
+    private float distanceWithCamera;
+    private int layer = 0;
+    private SphereCollider colliderPunch;
 
     private CharacterController characterController;
-    private SpriteRenderer spriteRenderer;
+    public SpriteRenderer spriteRenderer;
     private Color startColor;
     // Start is called before the first frame update
     void Awake()
     {
         characterController = GetComponent<CharacterController>();
-        spriteRenderer = GetComponent<SpriteRenderer>();
         startColor = spriteRenderer.color;
         currentStamina = maxStamina;
         speed = normalSpeed;
+        myCamera = Camera.main.gameObject;
+        distanceWithCamera =  myCamera.transform.position.y - gameObject.transform.position.y;
+        colliderPunch = GetComponent<SphereCollider>();
     }
 
     // Update is called once per frame
@@ -89,7 +98,7 @@ public class PlayerScript : MonoBehaviour
                 break;
         }
         CheckStats();
-
+        CheckGravity();
     }
 
     public void ChangeState(State newState)
@@ -102,6 +111,8 @@ public class PlayerScript : MonoBehaviour
                 spriteRenderer.color = startColor;
                 speed = normalSpeed;
                 currentTimePunch += Time.deltaTime;
+                colliderPunch.enabled = false;
+
                 break;
             case State.RUNING:
                 running = false;
@@ -111,12 +122,16 @@ public class PlayerScript : MonoBehaviour
                 spriteRenderer.color = startColor;
                 currentTimePunch += Time.deltaTime;
                 speed = normalSpeed;
+                colliderPunch.enabled = false;
+
                 break;
             case State.KNOCKBACK:
                 break;
             case State.FLYINGKICK:
                 spriteRenderer.color = startColor;
                 speed = normalSpeed;
+                colliderPunch.enabled = false;
+
                 break;
             case State.HABILITY:
                 break;
@@ -133,6 +148,7 @@ public class PlayerScript : MonoBehaviour
                 canvasPlayer.ChangeStamina();
                 currentTimeState = 0;
                 speed = normalSpeed / 2;
+                colliderPunch.enabled = true;
                 break;
             case State.RUNING:
                 running = true;
@@ -145,6 +161,8 @@ public class PlayerScript : MonoBehaviour
                 canvasPlayer.ChangeStamina();
                 currentTimeState = 0;
                 speed = normalSpeed * 2;
+                colliderPunch.enabled = true;
+
                 break;
             case State.KNOCKBACK:
                 currentTimeState = 0;
@@ -153,6 +171,8 @@ public class PlayerScript : MonoBehaviour
                 speed = normalSpeed * 3f;
                 spriteRenderer.color = Color.red;
                 currentTimeState = 0;
+                colliderPunch.enabled = true;
+
                 break;
             case State.HABILITY:
                 currentTimeState = 0;
@@ -166,14 +186,15 @@ public class PlayerScript : MonoBehaviour
     {
         toMove = Vector3.zero;
         if (Input.GetKey(upKey))
-            toMove += Vector3.up;
+            toMove += myCamera.transform.up;
         if (Input.GetKey(downKey))
-            toMove += Vector3.down;
+            toMove -= myCamera.transform.up;
         if (Input.GetKey(rightKey))
-            toMove += Vector3.right;
+            toMove += myCamera.transform.right;
         if (Input.GetKey(leftKey))
-            toMove += Vector3.left;
+            toMove -= myCamera.transform.right;
 
+        toMove = new Vector3(toMove.x, 0, toMove.z);
         toMove.Normalize();
         if (toMove.magnitude > 0)
         {
@@ -370,6 +391,18 @@ public class PlayerScript : MonoBehaviour
 
     }
 
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.gameObject.tag == "Enemie")
+        {
+            if (currentState == State.PUNCHING)
+                other.gameObject.GetComponent<EnemieBasic>().MoveDirectionHit((other.gameObject.transform.position - gameObject.transform.position).normalized, damageBase * speed);
+            if (currentState == State.PUNCHRUNNING || currentState == State.FLYINGKICK)
+                other.gameObject.GetComponent<EnemieBasic>().MoveDirectionHit((other.gameObject.transform.position - gameObject.transform.position).normalized, damageBase * speed / 2);
+            ChangeState(State.MOVING);
+        }
+    }
+
     private void OnActionButton()
     {
         RaycastHit rayHit;
@@ -395,8 +428,39 @@ public class PlayerScript : MonoBehaviour
         ChangeState(State.FLYINGKICK);
     }
 
+    private void CheckGravity()
+    {
+        verticalSpeed -= gravity * Time.deltaTime;
+        CollisionFlags collisionFlags = characterController.Move(new Vector3(0,verticalSpeed, 0) * Time.deltaTime);
+        if ((collisionFlags & CollisionFlags.Below) != 0)
+        {
+            onGround = false;
+        }
+        else
+            onGround = true;
+        if (onGround)
+            verticalSpeed = 0;
+
+    }
+
+    public void MoveCameraUpLayer()
+    {
+        myCamera.gameObject.transform.position = new Vector3(myCamera.transform.position.x, gameObject.transform.position.y + distanceWithCamera, myCamera.transform.position.z);
+
+    }
+
     private void MoveFlyKick()
     {
         characterController.Move(lastDirection * Time.deltaTime * speed);
+    }
+
+    public void SetLayerPlayer(int _layer)
+    {
+        layer = _layer;
+    }
+
+    public int GetLayerPlayer()
+    {
+        return layer;
     }
 }

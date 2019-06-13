@@ -12,10 +12,12 @@ public class PlantaCatapulta : MonoBehaviour
     [SerializeField] private KeyCode downKey = KeyCode.S;
     [SerializeField] private KeyCode rightKey = KeyCode.D;
     [SerializeField] private KeyCode leftKey = KeyCode.A;
+    private GameObject myCamera;
     // Start is called before the first frame update
     void Start()
     {
         direction = gameObject.transform.forward;
+        myCamera = Camera.main.gameObject;
     }
 
     // Update is called once per frame
@@ -34,13 +36,13 @@ public class PlantaCatapulta : MonoBehaviour
         Vector3 lastDirection = direction;
         direction = Vector3.zero;
         if (Input.GetKey(upKey))
-            direction += Vector3.up;
+            direction += myCamera.transform.up;
         if (Input.GetKey(downKey))
-            direction += Vector3.down;
+            direction -= myCamera.transform.up;
         if (Input.GetKey(rightKey))
-            direction += Vector3.right;
+            direction += myCamera.transform.right;
         if (Input.GetKey(leftKey))
-            direction += Vector3.left;
+            direction -= myCamera.transform.right;
 
         direction.Normalize();
         if (direction.magnitude == 0)
@@ -68,7 +70,7 @@ public class PlantaCatapulta : MonoBehaviour
         {
             if (player != null)
             {
-                player.gameObject.transform.position = new Vector3(gameObject.transform.position.x, gameObject.transform.position.y, player.gameObject.transform.position.z);
+                player.gameObject.transform.position = new Vector3(gameObject.transform.position.x, player.gameObject.transform.position.y, gameObject.transform.position.z);
                 player.gameObject.GetComponent<CharacterController>().enabled = true;
                 player.gameObject.SetActive(true);
 
@@ -77,7 +79,7 @@ public class PlantaCatapulta : MonoBehaviour
         }
         else
         {
-            player.gameObject.transform.position = new Vector3(gameObject.transform.position.x, gameObject.transform.position.y, player.gameObject.transform.position.z) + direction;
+            player.gameObject.transform.position = new Vector3(gameObject.transform.position.x, player.gameObject.transform.position.y, gameObject.transform.position.z) + direction;
             player.gameObject.GetComponent<CharacterController>().enabled = true;
             player.StartFlyKick(direction);
             player.gameObject.SetActive(true);
