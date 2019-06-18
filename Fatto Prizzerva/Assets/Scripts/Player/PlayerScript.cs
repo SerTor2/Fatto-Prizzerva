@@ -45,6 +45,7 @@ public class PlayerScript : MonoBehaviour
 
     private CharacterController characterController;
     public SpriteRenderer spriteRenderer;
+    public Animator anim;
     private Color startColor;
     // Start is called before the first frame update
     void Awake()
@@ -116,6 +117,7 @@ public class PlayerScript : MonoBehaviour
                 break;
             case State.RUNING:
                 running = false;
+                anim.SetBool("Running", running);
                 break;
             case State.PUNCHRUNNING:
                 running = false;
@@ -143,7 +145,7 @@ public class PlayerScript : MonoBehaviour
                 currentTimeState = 0;
                 break;
             case State.PUNCHING:
-                spriteRenderer.color = Color.red;
+                anim.SetTrigger("Fist");
                 currentStamina -= costStaminaPerPunch;
                 canvasPlayer.ChangeStamina();
                 currentTimeState = 0;
@@ -152,6 +154,7 @@ public class PlayerScript : MonoBehaviour
                 break;
             case State.RUNING:
                 running = true;
+                anim.SetBool("Running", running);
                 currentTimeState = 0;
                 break;
             case State.PUNCHRUNNING:
