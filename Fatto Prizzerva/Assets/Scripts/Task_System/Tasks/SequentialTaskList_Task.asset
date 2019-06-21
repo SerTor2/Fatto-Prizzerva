@@ -14,5 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   taskName: 
   taskDescription: 
-  tasksToAcomplish: []
+  tasksToAcomplish:
+  - {fileID: 11400000, guid: ee7433e6ac537c841822647ebcd1d9ed, type: 2}
+  - {fileID: 11400000, guid: 8252e21ba35488641a2fc671e991578a, type: 2}
   acomplishedTasks: 0

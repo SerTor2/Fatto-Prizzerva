@@ -1,0 +1,4 @@
+[NAMESPACE] 	Tasks
+[AUTHOR]	Daniel
+[BUGS]
+- A task can NOT be assigned on more than one task (as simple task and as part of a complex task)

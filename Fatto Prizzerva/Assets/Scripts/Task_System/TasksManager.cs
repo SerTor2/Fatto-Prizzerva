@@ -29,38 +29,8 @@ namespace Tasks
         [Header("World Data")]
         [SerializeField] private GameObject player;
 
-        //[[[[[[[[[[[[[[[[[[[[[[[[[[[ - PUBLIC METHODS - ]]]]]]]]]]]]]]]]]]]]]]]]]]]
 
-        public static TasksManager GetInstance()
-        {
-            return Instance;
-        }
-
-        public void ActivateTask(Task _taskToActivate, bool _checkIfPresent = true)
-        {
-            // check if task is already active or not (just in case)
-            if (_checkIfPresent)
-            {
-                if (activeTasks.Contains(_taskToActivate) == false)
-                {
-                    SetTaskCategory(_taskToActivate, TaskStatus.IN_PROGRESS);
-                }
-                else
-                {
-                    Debug.LogError("ERROR-LIST: The task you are trying to add is alredy active");
-                }
-            } else
-            {
-                // Insecure addition USE WITH CAUTION
-                SetTaskCategory(_taskToActivate, TaskStatus.IN_PROGRESS);
-            }
-            
-        }
-
-
-        //[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]
-
-
+        #region ENGINE METHODS
 
         private void Awake()
         {
@@ -79,6 +49,8 @@ namespace Tasks
 
             // null checks
             if (tasksCanvasController == null) Debug.LogError("TASKS_MANAGER_NULL: tasksCanvasController");
+            if (player == null)
+                player = GameObject.FindGameObjectWithTag("Player");
 
 
             // Performance setup
@@ -89,40 +61,7 @@ namespace Tasks
             achievedTasks = new List<Task>();
             failedTasks = new List<Task>();
 
-
-
-
-            // -------------------------------------------------------------------------- //
-
-            foreach  (Task _task in gameTasks)
-            {
-                Debug.LogWarning("Initiallizing " + _task.name);
-
-                // SIMPLE ----------------------------------------- //
-                if (_task is SimpleTask)
-                {
-                    SimpleTask _simpleTask = _task as SimpleTask;
-
-                    if (_simpleTask is ReachTask)
-                        _simpleTask.Setup(player);                   
-                }
-
-                // COMPLEX --------------------------------------- //   
-                if (_task is ComplexTask)
-                {
-                    ComplexTask _complexTask = _task as ComplexTask;
-
-                    foreach (Task _internalTask in _complexTask.GetTasksList())
-                    {
-                        // Dani esto estaria bien que el setup de los hijos los haga el padre
-                        if (_internalTask is ReachTask)
-                            _internalTask.Setup(player);
-                    }
-
-                }
-
-                ActivateTask(_task, true);
-            }
+            TasksSetup();
 
         }
 
@@ -155,7 +94,74 @@ namespace Tasks
             }
         }
 
+        #endregion
 
+        #region PUBLIC METHODS
+
+        public static TasksManager GetInstance()
+        {
+            return Instance;
+        }
+
+        public void ActivateTask(Task _taskToActivate, bool _safeActivation = true)
+        {
+            // check if task is already active or not (just in case)
+            if (_safeActivation)
+            {
+                if (activeTasks.Contains(_taskToActivate) == false)
+                {
+                    SetTaskCategory(_taskToActivate, TaskStatus.IN_PROGRESS);
+                }
+                else
+                {
+                    Debug.LogError("ERROR-LIST: The task you are trying to add is alredy active");
+                }
+            }
+            else
+            {
+                // Insecure addition USE WITH CAUTION
+                SetTaskCategory(_taskToActivate, TaskStatus.IN_PROGRESS);
+            }
+
+        }
+
+
+        #endregion
+
+        #region PRIVATE METHODS
+
+        private void TasksSetup()
+        {
+            foreach (Task _task in gameTasks)
+            {
+                Debug.LogWarning("Initiallizing " + _task.name);
+
+                // SIMPLE ----------------------------------------- //
+                if (_task is SimpleTask)
+                {
+                    SimpleTask _simpleTask = _task as SimpleTask;
+
+                    if (_simpleTask is ReachTask)
+                        _simpleTask.Setup(player);
+                }
+
+                // COMPLEX --------------------------------------- //   
+                if (_task is ComplexTask)
+                {
+                    ComplexTask _complexTask = _task as ComplexTask;
+
+                    foreach (Task _internalTask in _complexTask.GetTasksList())
+                    {
+                        // Dani esto estaria bien que el setup de los hijos los haga el padre
+                        if (_internalTask is ReachTask)
+                            _internalTask.Setup(player);
+                    }
+
+                }
+
+                ActivateTask(_task, true);
+            }
+        }
         private bool CheckTask(Task _task)
         {
             TaskStatus previousTaskState = _task.GetPreviousTaskState();
@@ -177,6 +183,7 @@ namespace Tasks
         {
             _task.Tick(timeForCheck);       // el dt pasado tiene una precision muy baja BUSCAR SOLUCION A ESTO
         }
+
         private void SetTaskCategory(Task _task, TaskStatus _newStatus, TaskStatus _previousStatus = TaskStatus.NONE)
         {
             // REMOVING OF LIST
@@ -224,8 +231,7 @@ namespace Tasks
             }
         }
 
-        
-
+        #endregion
     }
 }
 
