@@ -1,0 +1,24 @@
+
+
+// TASKS SYSTEM
+
+// INTERNAL ----------------------------------------- //
+
+
+LINES OF TEXT THE BOSS SAYS					
+	
+The enemy needs to be able to acces a script the witch cretes those lines on screen
+
+TUTORIALES
+
+Durante alguna de las partidas aparecen tips en pantalla e informacion de como jugar al juego
+¿Integrar esto con el sistema de tareas?
+¿Los tips suspenderan el flujo de juego?
+¿Tipo de confirmacion por parte del jugador para que aparezca el siguiente tip?
+
+EXCUSA PARA LEVANTARSE
+
+Pestaña que estara siempre visible en pantalla del juego pacifico y permitira al jugador levantarse (pausar juego de ajedrez) y moverse por la escena. Esta accion puede tener concecuencias con el boss.
+
+
+// VISUAL ------------------------------------------ //

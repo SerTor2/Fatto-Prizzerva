@@ -8,11 +8,15 @@ namespace Tasks
 
     public class TasksManager : MonoBehaviour
     {
+        // singleton
+        private static TasksManager _instance;
+        public static TasksManager Instance { get { return _instance; } }
 
-        private static TasksManager taskManagerInstance;
+        [SerializeField] private TasksCanvasController tasksCanvasController;
+
 
         [Header("Perfomance")]
-        [SerializeField] private int checkPerSecond;
+        [SerializeField] private int tickPerSecond;
         private float currentTime;
         private float timeForCheck;
 
@@ -29,7 +33,7 @@ namespace Tasks
 
         public static TasksManager GetInstance()
         {
-            return taskManagerInstance;
+            return Instance;
         }
 
         public void ActivateTask(Task _taskToActivate, bool _checkIfPresent = true)
@@ -60,47 +64,33 @@ namespace Tasks
 
         private void Awake()
         {
-            // singleton ???
-            if (taskManagerInstance == null)
-            {
-                taskManagerInstance = this;
-
-            } else
+            #region(Singleton Pattern)
+            DontDestroyOnLoad(this);
+            // Si _instancia tiene una referencia que no somos nosotros nos destruimos 
+            if (_instance != null && _instance != this)
             {
                 Destroy(this);
             }
+            else
+            {
+                _instance = this;
+            }
+            #endregion
+
+            // null checks
+            if (tasksCanvasController == null) Debug.LogError("TASKS_MANAGER_NULL: tasksCanvasController");
 
 
             // Performance setup
-            timeForCheck = ((1.0000f / (float)checkPerSecond) * 0.6000f);     // ticks per second caching
+            timeForCheck = ((1.0000f / (float)tickPerSecond) * 0.6000f);     // ticks per second caching
 
             // initializations
             activeTasks = new List<Task>();
             achievedTasks = new List<Task>();
             failedTasks = new List<Task>();
 
-            //// TODO : HAcer FUNCION RECURSIVA PARA EL SETUP DE LAS TAREAS YA QUE PUEDEN TENER PROFUNDIAD INFINITA
-            // "Constructors"
-            //foreach (Task task in gameTasks)
-            //{
-            //    if (task is SimpleTask)
-            //    {
-            //        Debug.LogError("Hi ST " + task.name);
 
-            //        if (task is ReachTask) task.Setup(player);
-            //    }
-            //    else if (task is ComplexTask)
-            //    {
-            //        Debug.LogError("Hi CT " + task.name);
 
-            //        foreach (Task _task in task.GetTasksList())
-            //        {
-            //            if (task is ReachTask) task.Setup(player);
-            //        }
-            //    }
-            //    // tasks initial setup TEMPORAL
-            //    ActivateTask(task, true);
-            //}
 
             // -------------------------------------------------------------------------- //
 
@@ -112,7 +102,6 @@ namespace Tasks
                 if (_task is SimpleTask)
                 {
                     SimpleTask _simpleTask = _task as SimpleTask;
-                    //Debug.Log("Hi ST " + _simpleTask.name);
 
                     if (_simpleTask is ReachTask)
                         _simpleTask.Setup(player);                   
@@ -122,7 +111,6 @@ namespace Tasks
                 if (_task is ComplexTask)
                 {
                     ComplexTask _complexTask = _task as ComplexTask;
-                    //Debug.Log("Hi CT " + _complexTask.name);
 
                     foreach (Task _internalTask in _complexTask.GetTasksList())
                     {
@@ -136,9 +124,16 @@ namespace Tasks
                 ActivateTask(_task, true);
             }
 
-
-
         }
+
+        private void Start()
+        {
+            foreach (Task task in activeTasks)
+            {
+                tasksCanvasController.AddTaskToCanvas(task);
+            }
+        }
+
 
         private void Update()
         {

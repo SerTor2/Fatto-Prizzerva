@@ -18,8 +18,8 @@ namespace Tasks
     [SerializeField]
     public abstract class Task : ScriptableObject
     {
-        [SerializeField] protected string taskName;
-        [SerializeField] [TextArea] private string taskDescription;
+        [SerializeField] protected string taskName = "NONE";
+        [SerializeField] [TextArea] private string taskDescription = "NONE";
 
         protected TaskStatus currentTaskState;
         protected TaskStatus previousState;
@@ -38,6 +38,15 @@ namespace Tasks
         {
             return isPinned;
         }
+        public string GetName ()
+        {
+            return taskName;
+        }
+        public string GetDescription()
+        {
+            return taskDescription;
+        }
+
 
         protected virtual void OnEnable()
         {

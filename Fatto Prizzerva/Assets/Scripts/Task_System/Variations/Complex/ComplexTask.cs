@@ -24,10 +24,9 @@ namespace Tasks
             acomplishedTasks = 0;
         }
 
-        
+        // no hacemos override del metodo tick debido a que cada tarea compleja lo usa de un 
+        // modo distinto
 
-
-        
 
     }
 }
