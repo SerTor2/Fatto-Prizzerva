@@ -9,7 +9,6 @@ namespace Tasks
     [CustomEditor(typeof(Task))]
     public class Task_Editor : Editor
     {
-
         private Color labelColor;
         private Vector2 colorFieldPosition;
         private Vector2 colorFieldSize;
@@ -23,7 +22,7 @@ namespace Tasks
         //EditorUtility.SetDirty();
         public override void OnInspectorGUI()
         {
-            base.OnInspectorGUI();
+            DrawDefaultInspector();
 
             Task task = (Task)target;           // referncia al objeto al cual estamos modificando el inspector
 
@@ -46,6 +45,7 @@ namespace Tasks
                     break;
             }
 
+            GUILayout.Toggle(false, new GUIContent("HI"));
 
             EditorGUI.ColorField(new Rect(0f, 0f, 10, 2), labelColor);
 

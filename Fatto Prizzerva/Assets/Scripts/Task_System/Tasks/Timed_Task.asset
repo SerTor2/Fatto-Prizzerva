@@ -14,4 +14,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   taskName: NONE
   taskDescription: NONE
-  timeBeforeExpiration: 0
+  timeBeforeExpiration: 10

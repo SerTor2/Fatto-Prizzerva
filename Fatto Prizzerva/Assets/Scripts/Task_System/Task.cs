@@ -13,9 +13,6 @@ namespace Tasks
         FAILED = -1                 // resultado negativo (fallaste wey)
     }
 
-
-    [Serializable]
-    [SerializeField]
     public abstract class Task : ScriptableObject
     {
         [SerializeField] protected string taskName = "NONE";

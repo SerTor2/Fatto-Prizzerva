@@ -4,6 +4,7 @@ using UnityEngine;
 
 namespace Tasks
 {
+    [System.Serializable]
     public abstract class SimpleTask : Task
     {
 

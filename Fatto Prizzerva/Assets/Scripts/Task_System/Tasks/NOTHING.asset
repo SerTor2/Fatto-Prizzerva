@@ -9,8 +9,8 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: faea51fce559a2f46b87489e9c0b0969, type: 3}
-  m_Name: Test_Task
+  m_Script: {fileID: 11500000, guid: 8d84bd83268502648a4192220c0bc88d, type: 3}
+  m_Name: NOTHING
   m_EditorClassIdentifier: 
   taskName: NONE
   taskDescription: NONE

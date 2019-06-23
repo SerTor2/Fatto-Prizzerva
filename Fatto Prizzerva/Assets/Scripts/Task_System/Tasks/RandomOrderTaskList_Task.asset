@@ -16,4 +16,5 @@ MonoBehaviour:
   taskDescription: NONE
   tasksToAcomplish:
   - {fileID: 11400000, guid: ee7433e6ac537c841822647ebcd1d9ed, type: 2}
-  acomplishedTasks: 1
+  - {fileID: 11400000, guid: 2d5862baadd71ee409503ec6322083d7, type: 2}
+  acomplishedTasks: 38

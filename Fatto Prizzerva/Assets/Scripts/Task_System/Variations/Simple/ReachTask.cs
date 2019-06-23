@@ -6,7 +6,7 @@ using UnityEngine;
 
 namespace Tasks
 {
-
+    [System.Serializable]
     [CreateAssetMenu(fileName = "Reach_Task", menuName = "Tasks/Reach_Task")]
     public class ReachTask : SimpleTask
     {

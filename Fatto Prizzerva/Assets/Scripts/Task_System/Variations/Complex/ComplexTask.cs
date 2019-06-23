@@ -6,6 +6,7 @@ using UnityEngine;
 namespace Tasks
 {
     // [CreateAssetMenu(fileName = "Complex_Task", menuName = "Tasks/Complex_Task")]
+    [System.Serializable]
     public abstract class ComplexTask : Task
     {
         [Header("Setup")]

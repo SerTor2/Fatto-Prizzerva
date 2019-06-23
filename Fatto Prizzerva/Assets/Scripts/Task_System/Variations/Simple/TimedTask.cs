@@ -8,6 +8,7 @@ namespace Tasks
     /// <summary>
     /// Do something before the time ends
     /// </summary>
+    [System.Serializable]
     [CreateAssetMenu(fileName = "Timed_Task", menuName = "Tasks/Timed_Task")]
     public class TimedTask : SimpleTask
     {

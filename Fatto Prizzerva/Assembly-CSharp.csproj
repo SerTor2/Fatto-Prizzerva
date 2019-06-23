@@ -71,6 +71,7 @@
     <Compile Include="Assets\Scripts\Task_System\Canvas\VisualTask.cs" />
     <Compile Include="Assets\Scripts\Task_System\Task.cs" />
     <Compile Include="Assets\Scripts\Task_System\TasksManager.cs" />
+    <Compile Include="Assets\Scripts\Task_System\Test\Test.cs" />
     <Compile Include="Assets\Scripts\Task_System\TestPlayer.cs" />
     <Compile Include="Assets\Scripts\Task_System\Variations\Complex\ComplexRandomTask.cs" />
     <Compile Include="Assets\Scripts\Task_System\Variations\Complex\ComplexSequentialTask.cs" />

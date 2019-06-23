@@ -98,6 +98,15 @@ namespace Tasks
 
         #region PUBLIC METHODS
 
+        public List<Task> GetActiveTasks ()
+        {
+            return activeTasks;
+        }  
+        public List<Task> GetAllTasks ()
+        {
+            return gameTasks;
+        }
+
         public static TasksManager GetInstance()
         {
             return Instance;

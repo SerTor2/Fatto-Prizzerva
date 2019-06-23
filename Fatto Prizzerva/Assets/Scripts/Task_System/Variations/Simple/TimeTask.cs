@@ -5,6 +5,7 @@ using UnityEngine;
 
 namespace Tasks
 {
+    [System.Serializable]
     [CreateAssetMenu(fileName = "Time_Task", menuName = "Tasks/Time_Task")]
     public class TimeTask : SimpleTask
     {

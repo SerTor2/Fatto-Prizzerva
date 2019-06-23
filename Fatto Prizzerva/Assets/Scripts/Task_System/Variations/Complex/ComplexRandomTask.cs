@@ -12,6 +12,7 @@ using UnityEngine;
 
 namespace Tasks
 {
+    [System.Serializable]
     [CreateAssetMenu(fileName = "RandomOrderTaskList_Task", menuName = "Tasks/Complex_Task/RandomOrder")]
     public class ComplexRandomTask : ComplexTask
     {

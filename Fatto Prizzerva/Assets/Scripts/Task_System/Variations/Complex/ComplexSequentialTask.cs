@@ -13,6 +13,7 @@ using UnityEngine;
 
 namespace Tasks
 {
+    [System.Serializable]
     [CreateAssetMenu(fileName = "SequentialTaskList_Task", menuName = "Tasks/Complex_Task/Sequence")]
     public class ComplexSequentialTask : ComplexTask
     {
