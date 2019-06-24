@@ -2,3 +2,5 @@
 [AUTHOR]	Daniel
 [BUGS]
 - A task can NOT be assigned on more than one task (as simple task and as part of a complex task)
+- The setup function on the task manager should be recursive to take in consideration the infinite levels of each task
+IF YOU DONT WANT TO MAKE IT RECURSIVE YOU COULD USE A BLACKBOARD FOR THE TASKS DATA TO MAKE THEM ACCES IT ON THE SETUP

@@ -5,15 +5,17 @@ using UnityEngine;
 
 namespace Tasks
 {
-
+    [RequireComponent(typeof(TasksBlacboard))]
     public class TasksManager : MonoBehaviour
     {
         // singleton
         private static TasksManager _instance;
         public static TasksManager Instance { get { return _instance; } }
 
-        [SerializeField] private TasksCanvasController tasksCanvasController;
 
+        [Header("References")]
+        [SerializeField] private TasksCanvasController tasksCanvasController;
+        [SerializeField] private TasksBlacboard tasksBlackboard;
 
         [Header("Perfomance")]
         [SerializeField] private int tickPerSecond;
@@ -25,10 +27,7 @@ namespace Tasks
         [SerializeField] private List<Task> activeTasks;            // tasks being checked
         [SerializeField] private List<Task> achievedTasks;          // tasks completed SUCCESFULLY
         [SerializeField] private List<Task> failedTasks;            // tasks completed in FAILURE
-
-        [Header("World Data")]
-        [SerializeField] private GameObject player;
-
+    
 
         #region ENGINE METHODS
 
@@ -47,10 +46,11 @@ namespace Tasks
             }
             #endregion
 
+            tasksBlackboard = GetComponent<TasksBlacboard>();
+
             // null checks
             if (tasksCanvasController == null) Debug.LogError("TASKS_MANAGER_NULL: tasksCanvasController");
-            if (player == null)
-                player = GameObject.FindGameObjectWithTag("Player");
+            if (tasksBlackboard == null) Debug.LogError("TASKS_MANAGER_NULL: No blackboard found");
 
 
             // Performance setup
@@ -71,6 +71,7 @@ namespace Tasks
             {
                 tasksCanvasController.AddTaskToCanvas(task);
             }
+
         }
 
 
@@ -151,11 +152,11 @@ namespace Tasks
                     SimpleTask _simpleTask = _task as SimpleTask;
 
                     if (_simpleTask is ReachTask)
-                        _simpleTask.Setup(player);
-                }
+                        _simpleTask.Setup(tasksBlackboard.GetPlayer().gameObject);
 
+                }
                 // COMPLEX --------------------------------------- //   
-                if (_task is ComplexTask)
+                else if (_task is ComplexTask)
                 {
                     ComplexTask _complexTask = _task as ComplexTask;
 
@@ -163,7 +164,7 @@ namespace Tasks
                     {
                         // Dani esto estaria bien que el setup de los hijos los haga el padre
                         if (_internalTask is ReachTask)
-                            _internalTask.Setup(player);
+                            _internalTask.Setup(tasksBlackboard.GetPlayer().gameObject);
                     }
 
                 }
@@ -182,12 +183,15 @@ namespace Tasks
             {
                 SetTaskCategory(_task, newTaskState, previousTaskState);
                 return true;
-            } else
+            }
+            else
             {
                 // Category change not needed
                 return false;
-            }  
+            }
         }
+
+
         private void TickTask(Task _task)
         {
             _task.Tick(timeForCheck);       // el dt pasado tiene una precision muy baja BUSCAR SOLUCION A ESTO

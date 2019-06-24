@@ -15,6 +15,7 @@ namespace Tasks
 
     public abstract class Task : ScriptableObject
     {
+
         [SerializeField] protected string taskName = "NONE";
         [SerializeField] [TextArea] private string taskDescription = "NONE";
 
@@ -51,6 +52,7 @@ namespace Tasks
             if (taskDescription == "") taskDescription = "NODESCRIPTION_SET";
         }
 
+
         // funciones para añadir datos de funcionamiento a la tarea 
         public virtual void Setup()           
         {
@@ -66,10 +68,7 @@ namespace Tasks
             Debug.Log("Setting up --- " + this.taskName);
 
         }
-        public virtual void Setup (float _time)
-        {
-            throw new NotImplementedException();
-        }
+
 
         // funcion de update (en el caso de ser necesrio)
         public virtual void Tick(float _deltaTime)

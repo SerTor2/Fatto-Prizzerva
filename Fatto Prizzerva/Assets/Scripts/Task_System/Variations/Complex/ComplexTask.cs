@@ -19,6 +19,10 @@ namespace Tasks
         {
             return tasksToAcomplish;
         }
+        public Task GetTaskFromQueue (int _index)
+        {
+            return tasksToAcomplish[_index];
+        }
 
         protected override void OnEnable()
         {

@@ -7,11 +7,8 @@ namespace Tasks
 {
     [System.Serializable]
     [CreateAssetMenu(fileName = "Time_Task", menuName = "Tasks/Time_Task")]
-    public class TimeTask : SimpleTask
+    public class TimeTask : TimeRelatedTask
     {
-        [Header("Task Specific Atributes")]
-        [SerializeField] private float targetTime;
-        private float currentTime;
 
         protected override void OnEnable()
         {
