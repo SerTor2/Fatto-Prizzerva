@@ -36,24 +36,24 @@ namespace Tasks
                     // Achieved check
                     if (acomplishedTasks == tasksToAcomplish.Count)
                     {
-                        currentTaskState = TaskStatus.ACHIEVED;
+                        CurrentTaskState = TaskStatus.ACHIEVED;
                     }
 
                 }
                 else if (_tempTaskStatus == TaskStatus.FAILED)
                 {
-                    currentTaskState = _tempTaskStatus;
+                    CurrentTaskState = _tempTaskStatus;
                 }
                 else
                 {
-                    currentTaskState = TaskStatus.IN_PROGRESS;
+                    CurrentTaskState = TaskStatus.IN_PROGRESS;
                 }
 
             }
 
-            previousState = currentTaskState;
+            PreviousState = CurrentTaskState;
 
-            return currentTaskState;
+            return CurrentTaskState;
 
         }
 

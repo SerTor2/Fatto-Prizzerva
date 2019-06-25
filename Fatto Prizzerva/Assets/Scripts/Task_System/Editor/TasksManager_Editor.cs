@@ -32,6 +32,7 @@ namespace Tasks
 
             EditorGUILayout.LabelField("Game Tasks Status");
 
+            
             // Body drawing
             foreach (Task task in manager.GetAllTasks())
             {
@@ -39,6 +40,7 @@ namespace Tasks
             }
 
             deph = 0;
+            
         }
 
         // Scan task for children tasks RECURSIVE

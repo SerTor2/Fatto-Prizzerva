@@ -1,6 +1,6 @@
 ﻿using System;
 using UnityEngine;
-
+using UnityEngine.Events;
 
 namespace Tasks
 {
@@ -15,22 +15,30 @@ namespace Tasks
 
     public abstract class Task : ScriptableObject
     {
-
+        protected TasksBlackboard blackboard;
         [SerializeField] protected string taskName = "NONE";
         [SerializeField] [TextArea] private string taskDescription = "NONE";
 
-        protected TaskStatus currentTaskState;
-        protected TaskStatus previousState;
+        private TaskStatus currentTaskState;
+        protected TaskStatus CurrentTaskState { get => currentTaskState; set => currentTaskState = value; }
+        private TaskStatus previousState;
+        protected TaskStatus PreviousState { get => previousState; set => previousState = value; }
+
+
         protected bool isPinned = false;              // marcamos si estamos siguie3ndo o no esta tarea (mostrar si esta pinned en la interfaz de juego)
+
+        //[Header("Events")] 
+        //public UnityEvent OnCompletion_Evnt;
+        //public UnityEvent OnFail_Evnt;
 
 
         public TaskStatus GetPreviousTaskState()
         {
-            return previousState;
+            return PreviousState;
         }
         public TaskStatus GetCurrentTaskState()
         {
-            return currentTaskState;
+            return CurrentTaskState;
         }
         public bool GetIsPinned ()
         {
@@ -57,15 +65,17 @@ namespace Tasks
         public virtual void Setup()           
         {
             // Override this method
-            //throw new NotImplementedException();
-            Debug.Log("Setting up --- " + this.taskName);
+            throw new NotImplementedException();
 
+        }
+        public virtual void Setup (TasksBlackboard _blackboard)
+        {
+            blackboard = _blackboard;
         }
         public virtual void Setup(GameObject _objectToFollow)
         {
             // Override this method
-            //throw new NotImplementedException();
-            Debug.Log("Setting up --- " + this.taskName);
+            throw new NotImplementedException();
 
         }
 

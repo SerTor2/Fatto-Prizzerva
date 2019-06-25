@@ -20,9 +20,16 @@ namespace Tasks
 
 
         // we do need to give the data to the task prior to check it, this way we only need one method for the Check and it's easier to mantain
-        public override void Setup(GameObject _objectToFollow)
+        //public override void Setup(GameObject _objectToFollow)
+        //{
+        //    objectToFollow = _objectToFollow;
+        //}
+
+        public override void Setup(TasksBlackboard _blackboard)
         {
-            objectToFollow = _objectToFollow;
+            base.Setup(_blackboard);
+
+            objectToFollow = _blackboard.Player.gameObject;
         }
 
         // check for completion of the task (currently you can not fail it)
@@ -34,13 +41,13 @@ namespace Tasks
             float _distanceToTarget = Vector3.Magnitude(_distanceToTarget_Vect);
 
             if (_distanceToTarget <= targetRadius)
-                currentTaskState = TaskStatus.ACHIEVED;
+                CurrentTaskState = TaskStatus.ACHIEVED;
             else
-                currentTaskState = TaskStatus.IN_PROGRESS;
+                CurrentTaskState = TaskStatus.IN_PROGRESS;
 
-            previousState = currentTaskState;
+            PreviousState = CurrentTaskState;
 
-            return currentTaskState;
+            return CurrentTaskState;
         }
 
 

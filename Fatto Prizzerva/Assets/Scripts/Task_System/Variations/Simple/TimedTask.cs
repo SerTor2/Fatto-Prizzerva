@@ -30,16 +30,16 @@ namespace Tasks
         {
             if (currentTime <= 0)
             {
-                currentTaskState = TaskStatus.FAILED;
+                CurrentTaskState = TaskStatus.FAILED;
 
             } else
             {
-                currentTaskState = TaskStatus.IN_PROGRESS;
+                CurrentTaskState = TaskStatus.IN_PROGRESS;
                 // wait until someone tells you the task has been acomplished
             }
 
-            previousState = currentTaskState;
-            return currentTaskState;
+            PreviousState = CurrentTaskState;
+            return CurrentTaskState;
 
 
         }

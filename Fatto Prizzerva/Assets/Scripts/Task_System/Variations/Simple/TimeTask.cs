@@ -25,16 +25,16 @@ namespace Tasks
         {
             if (currentTime >= targetTime)
             {
-                currentTaskState = TaskStatus.ACHIEVED;
+                CurrentTaskState = TaskStatus.ACHIEVED;
 
             } else
             {
-                currentTaskState = TaskStatus.IN_PROGRESS;
+                CurrentTaskState = TaskStatus.IN_PROGRESS;
             }
 
-            previousState = currentTaskState;
+            PreviousState = CurrentTaskState;
 
-            return currentTaskState;
+            return CurrentTaskState;
 
         }
 

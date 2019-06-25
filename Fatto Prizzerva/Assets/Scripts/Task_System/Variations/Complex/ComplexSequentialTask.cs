@@ -31,7 +31,7 @@ namespace Tasks
             
             if (_tempTaskStatus == TaskStatus.FAILED)
             {
-                currentTaskState = TaskStatus.FAILED;             
+                CurrentTaskState = TaskStatus.FAILED;             
                 
             } else if (_tempTaskStatus == TaskStatus.ACHIEVED)
             {
@@ -40,7 +40,7 @@ namespace Tasks
                 if (currentTaskIndex == tasksToAcomplish.Count - 1)
                 {
                     // serie completada
-                    currentTaskState = TaskStatus.ACHIEVED;
+                    CurrentTaskState = TaskStatus.ACHIEVED;
 
                 } else
                 {
@@ -49,12 +49,12 @@ namespace Tasks
                 }
             } else
             {
-                currentTaskState = TaskStatus.IN_PROGRESS;
+                CurrentTaskState = TaskStatus.IN_PROGRESS;
             }
 
-            previousState = currentTaskState;
+            PreviousState = CurrentTaskState;
 
-            return currentTaskState;
+            return CurrentTaskState;
 
         }
 

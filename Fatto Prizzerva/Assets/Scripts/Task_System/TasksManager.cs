@@ -5,17 +5,16 @@ using UnityEngine;
 
 namespace Tasks
 {
-    [RequireComponent(typeof(TasksBlacboard))]
     public class TasksManager : MonoBehaviour
     {
         // singleton
         private static TasksManager _instance;
         public static TasksManager Instance { get { return _instance; } }
 
+        [SerializeField] private TasksBlackboard blackboard;
 
         [Header("References")]
         [SerializeField] private TasksCanvasController tasksCanvasController;
-        [SerializeField] private TasksBlacboard tasksBlackboard;
 
         [Header("Perfomance")]
         [SerializeField] private int tickPerSecond;
@@ -46,11 +45,9 @@ namespace Tasks
             }
             #endregion
 
-            tasksBlackboard = GetComponent<TasksBlacboard>();
 
             // null checks
             if (tasksCanvasController == null) Debug.LogError("TASKS_MANAGER_NULL: tasksCanvasController");
-            if (tasksBlackboard == null) Debug.LogError("TASKS_MANAGER_NULL: No blackboard found");
 
 
             // Performance setup
@@ -60,6 +57,8 @@ namespace Tasks
             activeTasks = new List<Task>();
             achievedTasks = new List<Task>();
             failedTasks = new List<Task>();
+
+            TasksBlackboardSetup();
 
             TasksSetup();
 
@@ -140,38 +139,34 @@ namespace Tasks
 
         #region PRIVATE METHODS
 
-        private void TasksSetup()
+        private void TasksBlackboardSetup ()
         {
-            foreach (Task _task in gameTasks)
+            blackboard.Setup(GameObject.FindGameObjectWithTag("Player").GetComponent<TestPlayer>());
+        }
+
+        private void TasksSetup ()
+        {
+            foreach (Task task in gameTasks)
             {
-                Debug.LogWarning("Initiallizing " + _task.name);
-
-                // SIMPLE ----------------------------------------- //
-                if (_task is SimpleTask)
-                {
-                    SimpleTask _simpleTask = _task as SimpleTask;
-
-                    if (_simpleTask is ReachTask)
-                        _simpleTask.Setup(tasksBlackboard.GetPlayer().gameObject);
-
-                }
-                // COMPLEX --------------------------------------- //   
-                else if (_task is ComplexTask)
-                {
-                    ComplexTask _complexTask = _task as ComplexTask;
-
-                    foreach (Task _internalTask in _complexTask.GetTasksList())
-                    {
-                        // Dani esto estaria bien que el setup de los hijos los haga el padre
-                        if (_internalTask is ReachTask)
-                            _internalTask.Setup(tasksBlackboard.GetPlayer().gameObject);
-                    }
-
-                }
-
-                ActivateTask(_task, true);
+                SetupTask(task);
             }
         }
+        private void SetupTask (Task _task)
+        {
+            _task.Setup(blackboard);          // lo idoneo es que cada objeto se apañe para setupearse
+            ActivateTask(_task, true);
+
+            // Propagation
+            if (_task is ComplexTask)
+            {
+                // buscamos sus hijos
+                foreach (Task task in (_task as ComplexTask).GetTasksList())
+                {
+                    SetupTask(task);
+                }
+            }
+        }
+
         private bool CheckTask(Task _task)
         {
             TaskStatus previousTaskState = _task.GetPreviousTaskState();
