@@ -22,6 +22,9 @@ namespace Tasks
         [SerializeField] private Transform completedTasksContainer;
         [SerializeField] private Transform failedTasksContainer;
 
+        [Header("Listed Tasks")]
+        [SerializeField] private List<VisualTask> canvasedTasks_Lst;
+
         // Control
         private bool isPanelActive;                 // flag to control if the object is being used actively
         public bool isTransitioning = false;        // flag to control if the animation is playing    
@@ -35,7 +38,7 @@ namespace Tasks
             if (activeTasksContainer == null || completedTasksContainer == null || failedTasksContainer == null)
                 Debug.LogError("ERROR_TASKS_CANVAS_CONTROLLER: Faltan asignar transformadas del canvas");
 
-
+            canvasedTasks_Lst = new List<VisualTask>();
 
             isPanelActive = (tasksCanvasGroup.alpha == 1f) ? 
                 (isPanelActive = true) : (isPanelActive = false);
@@ -104,30 +107,47 @@ namespace Tasks
 
         public void AddTaskToCanvas (Task _taskToAdd)
         {
-
             // el canvas que hay durnate el juego muestra informacion de objetivos muy simplificada 
             // de momento se muestran igual las tareas simples y las complejas
 
-            // simple tasks
-            if (_taskToAdd is SimpleTask)
+            GameObject _canvasedTask = Instantiate(simpleTaskPrefab, activeTasksContainer);
+            VisualTask _visualTask = _canvasedTask.GetComponent<VisualTask>();
+
+            canvasedTasks_Lst.Add(_visualTask);
+            _visualTask.SetupData(_taskToAdd, false);
+
+        }
+
+        public void RemoveTaskFromCanvas(Task _task)
+        {
+            VisualTask _visualtaskToDestroy = null;
+
+            // LOCATE -------------------------------------------------- //
+            foreach (VisualTask visualTask in canvasedTasks_Lst)
             {
-                // cutre para ir probando
-                GameObject _canvasedTask = Instantiate(simpleTaskPrefab, activeTasksContainer);
-                VisualTask _visualTask = _canvasedTask.GetComponent<VisualTask>();
+                Task _referencedTask = visualTask.GetReferencedTask();
+                Debug.Log(_referencedTask);
 
-                _visualTask.SetupData(_taskToAdd.GetName());
-
-            } else if (_taskToAdd is ComplexTask)
-            {
-
-                // cutre para ir probando
-                GameObject _canvasedTask = Instantiate(simpleTaskPrefab, activeTasksContainer);
-                VisualTask _visualTask = _canvasedTask.GetComponent<VisualTask>();
-
-                _visualTask.SetupData(_taskToAdd.GetName());
-
+                if (_referencedTask == _task)
+                {
+                    _visualtaskToDestroy = visualTask;
+                    break;
+                }                    
             }
 
+            // REMOVAL ----------------------------------------------- //
+            if (_visualtaskToDestroy)
+            {
+                Debug.Log("TASKSCANVAS: Destroying task " + _task.GetName());
+                canvasedTasks_Lst.Remove(_visualtaskToDestroy);
+                Destroy(_visualtaskToDestroy.gameObject);
+            
+            } else
+            {
+                Debug.LogError("TASKSCANVAS: Unable to destroy task " + _task.GetName());
+
+            }
+            
 
         }
 

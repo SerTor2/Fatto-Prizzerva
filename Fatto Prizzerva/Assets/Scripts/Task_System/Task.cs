@@ -1,6 +1,8 @@
 ﻿using System;
 using UnityEngine;
 using UnityEngine.Events;
+using System.Collections.Generic;
+using System.Collections;
 
 namespace Tasks
 {
@@ -19,13 +21,14 @@ namespace Tasks
         [SerializeField] protected string taskName = "NONE";
         [SerializeField] [TextArea] private string taskDescription = "NONE";
 
+        System.Random rnd;
+        [SerializeField] private int taskId;
+        private static List<int> tasksIdOnUse;              // ID EN USO
+
         private TaskStatus currentTaskState;
         protected TaskStatus CurrentTaskState { get => currentTaskState; set => currentTaskState = value; }
         private TaskStatus previousState;
         protected TaskStatus PreviousState { get => previousState; set => previousState = value; }
-
-
-        protected bool isPinned = false;              // marcamos si estamos siguie3ndo o no esta tarea (mostrar si esta pinned en la interfaz de juego)
 
         //[Header("Events")] 
         //public UnityEvent OnCompletion_Evnt;
@@ -40,10 +43,6 @@ namespace Tasks
         {
             return CurrentTaskState;
         }
-        public bool GetIsPinned ()
-        {
-            return isPinned;
-        }
         public string GetName ()
         {
             return taskName;
@@ -52,32 +51,36 @@ namespace Tasks
         {
             return taskDescription;
         }
+        public int GetTaskId()
+        {
+            return taskId;
+        }
 
 
         protected virtual void OnEnable()
         {
+            rnd = new System.Random();
+
             if (taskName == "") taskName = "UNNNAMED_TASK";
             if (taskDescription == "") taskDescription = "NODESCRIPTION_SET";
         }
 
 
-        // funciones para añadir datos de funcionamiento a la tarea 
+        // setup para tareas que NO REQUIERAN DE BLACKBOARD
         public virtual void Setup()           
         {
             // Override this method
-            throw new NotImplementedException();
-
+            SetRandomId();
         }
+        // setup para tareas que REQUIERAN DE BLACKBOARD
         public virtual void Setup (TasksBlackboard _blackboard)
         {
             blackboard = _blackboard;
-        }
-        public virtual void Setup(GameObject _objectToFollow)
-        {
+            SetRandomId();
             // Override this method
-            throw new NotImplementedException();
 
         }
+
 
 
         // funcion de update (en el caso de ser necesrio)
@@ -85,8 +88,6 @@ namespace Tasks
         {
             // override IF necesary
         }
-
-
         // Funcion de check
         public virtual TaskStatus Check()
         {
@@ -94,6 +95,19 @@ namespace Tasks
             throw new NotImplementedException();
         }
 
+        private void SetRandomId()
+        {
+            if (tasksIdOnUse == null)
+            {
+                tasksIdOnUse = new List<int>();
+            }
+
+            // dani mejora esto
+            taskId = tasksIdOnUse.Count + 1;
+
+            //Debug.LogError(taskId);
+            tasksIdOnUse.Add(taskId);
+        }
 
     }
 

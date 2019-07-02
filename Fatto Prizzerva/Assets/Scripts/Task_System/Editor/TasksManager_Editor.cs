@@ -12,10 +12,19 @@ namespace Tasks
         TasksManager manager;
         int deph = 0;
 
+        private List<Task> scannedTasks;
+
         public Color inProgress_Clr = Color.blue;
-        public Color completed_Clr;
-        public Color failed_Clr;
-        public Color other_Clr;
+        public Color completed_Clr = Color.green;
+        public Color failed_Clr = Color.red;
+        public Color other_Clr = Color.black;
+
+        public string debugInfo;
+
+        private void Awake()
+        {
+            scannedTasks = new List<Task>();
+        }
 
         public override bool RequiresConstantRepaint()
         {
@@ -30,22 +39,43 @@ namespace Tasks
             manager = (TasksManager)target;
 
 
-            EditorGUILayout.LabelField("Game Tasks Status");
+            EditorGUILayout.LabelField("Game Tasks Status\r\n");
+            EditorGUILayout.HelpBox(debugInfo, MessageType.Warning,true);
 
-            
+
+            MonitorTaskList(manager.GetGameTasks());
+        }
+
+        private void MonitorTaskList (List<Task> _listToMonitor)
+        {
             // Body drawing
-            foreach (Task task in manager.GetAllTasks())
+            foreach (Task task in _listToMonitor)
             {
                 ScanTask(task, ref deph);
             }
 
+            // restauramos la lista de tareas escaneadas
+            scannedTasks = new List<Task>();
+
             deph = 0;
-            
         }
 
         // Scan task for children tasks RECURSIVE
         private void ScanTask (Task _task, ref int _deph)
         {
+
+            // if the task has been already processed we stop to evade a infinite loop
+            if (scannedTasks.Contains(_task))
+            {
+                debugInfo = "Las tareas no pueden estar repetidas";
+                //Debug.LogError("ERROR_TASKMANAGER-EDITOR: "  + debugInfo + " " + _task.name);
+                return;
+            } else
+            {
+                debugInfo = "Funcionando normalmente";
+                scannedTasks.Add(_task);
+            }
+
             CreateTaskLabel(_task, _deph);
 
             if (_task is ComplexTask)
@@ -67,6 +97,7 @@ namespace Tasks
 
                 }
 
+
             }
 
 
@@ -87,6 +118,9 @@ namespace Tasks
                     taskEntry += "\t";
                 }
             }
+            // add id ______________________________________________ //
+            taskEntry += _task.GetTaskId() + "___";
+
             // Set Task Color _____________________________________ //
             GUIStyle s = new GUIStyle(EditorStyles.textField);
             switch (_task.GetCurrentTaskState())
@@ -121,6 +155,8 @@ namespace Tasks
 
             // create label _____________________________________ //
             EditorGUILayout.LabelField(new GUIContent(taskEntry), s);
+
+            scannedTasks.Add(_task);
 
         }
 

@@ -5,6 +5,8 @@ using UnityEngine;
 
 namespace Tasks
 {
+
+
     public class TasksManager : MonoBehaviour
     {
         // singleton
@@ -26,7 +28,7 @@ namespace Tasks
         [SerializeField] private List<Task> activeTasks;            // tasks being checked
         [SerializeField] private List<Task> achievedTasks;          // tasks completed SUCCESFULLY
         [SerializeField] private List<Task> failedTasks;            // tasks completed in FAILURE
-    
+
 
         #region ENGINE METHODS
 
@@ -84,7 +86,16 @@ namespace Tasks
                 {
                     // CHECK 
                     if (CheckTask(task))
+                    {
+                        // si hemos completado la tarea avisamos al manager visual para que la quite
+                        if (task.GetCurrentTaskState() == TaskStatus.ACHIEVED)
+                        {
+                            tasksCanvasController.RemoveTaskFromCanvas(task);
+                        }
+
                         return;
+                    }
+
 
                     // TICK
                     TickTask(task);
@@ -98,14 +109,62 @@ namespace Tasks
 
         #region PUBLIC METHODS
 
-        public List<Task> GetActiveTasks ()
+        public List<Task> GetActiveTasks()
         {
             return activeTasks;
-        }  
-        public List<Task> GetAllTasks ()
+        }
+        public List<Task> GetGameTasks()
         {
             return gameTasks;
         }
+
+
+        public Task GetTask(int _taskID, List<Task> _taskToLookFrom)
+        {
+            for (int index = 0; index < gameTasks.Count; index++)
+            {
+                Task currentTask = gameTasks[index];
+
+                // if is a complex task we start doing recursion ............................. //
+                if (currentTask is ComplexTask)
+                {
+                    List<Task> childrenTasks = new List<Task>();
+                    childrenTasks = (currentTask as ComplexTask).GetTasksList();
+
+                    foreach (Task childTask in childrenTasks)
+                    {
+                        GetTask(_taskID, childrenTasks);
+                    }
+
+                    // If is a simple task we just check if the id coincides targetId == taskId ....... //
+                }
+                else
+                {
+                    if (CheckIsDesiredTask(_taskID, currentTask))
+                        return currentTask;
+                }
+            }
+
+            Debug.LogWarning("WARNING: la tarea con indice " + _taskID + " no ha sido encontrada en la lista GAMETASKS");
+            return null;
+        }
+
+
+        private bool CheckIsDesiredTask(int _targetIndex, Task _taskToCheck)
+        {
+            // Is it the task we are looking for?
+            if (_taskToCheck.GetTaskId() == _targetIndex)
+            {
+                return true;
+
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+
 
         public static TasksManager GetInstance()
         {
@@ -139,22 +198,25 @@ namespace Tasks
 
         #region PRIVATE METHODS
 
-        private void TasksBlackboardSetup ()
+        private void TasksBlackboardSetup()
         {
-            blackboard.Setup(GameObject.FindGameObjectWithTag("Player").GetComponent<TestPlayer>());
+            blackboard.Player = GameObject.FindGameObjectWithTag("Player").GetComponent<TestPlayer>();
         }
 
-        private void TasksSetup ()
+        private void TasksSetup()
         {
             foreach (Task task in gameTasks)
             {
                 SetupTask(task);
             }
         }
-        private void SetupTask (Task _task)
+        private void SetupTask(Task _task, bool _addToActiveTasks = true)
         {
             _task.Setup(blackboard);          // lo idoneo es que cada objeto se apañe para setupearse
-            ActivateTask(_task, true);
+
+            // debido a la propia recursividad de este metodo y el hecho que no queremos que todas las subtareas se añadan a las tareas activas utilizaremos el flag
+            if (_addToActiveTasks)
+                ActivateTask(_task, true);
 
             // Propagation
             if (_task is ComplexTask)
@@ -162,7 +224,7 @@ namespace Tasks
                 // buscamos sus hijos
                 foreach (Task task in (_task as ComplexTask).GetTasksList())
                 {
-                    SetupTask(task);
+                    SetupTask(task, false);
                 }
             }
         }
@@ -186,10 +248,9 @@ namespace Tasks
             }
         }
 
-
         private void TickTask(Task _task)
         {
-            _task.Tick(timeForCheck);       // el dt pasado tiene una precision muy baja BUSCAR SOLUCION A ESTO
+            _task.Tick(timeForCheck);
         }
 
         private void SetTaskCategory(Task _task, TaskStatus _newStatus, TaskStatus _previousStatus = TaskStatus.NONE)

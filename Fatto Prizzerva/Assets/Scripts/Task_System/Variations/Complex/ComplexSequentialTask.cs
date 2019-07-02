@@ -35,7 +35,7 @@ namespace Tasks
                 
             } else if (_tempTaskStatus == TaskStatus.ACHIEVED)
             {
-                Debug.LogWarning("microtask " + _currentTask.name + " acomplished ");
+                //Debug.LogWarning("microtask " + _currentTask.name + " acomplished ");
 
                 if (currentTaskIndex == tasksToAcomplish.Count - 1)
                 {

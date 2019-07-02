@@ -16,6 +16,7 @@ namespace Tasks
         [Header("Enemy related Data")]
         public GameObject placeh9lder;
 
+
         // setup the data of the blackboard 
         public void Setup(TestPlayer _player)
         {

@@ -15,6 +15,7 @@ namespace Tasks
 
         public override void Setup()
         {
+            base.Setup();
             Debug.Log("Nothing to setup cause this is a test, but your name is " + yourName);
             Debug.Log("Even when I'm wrong I'm true");
         }
