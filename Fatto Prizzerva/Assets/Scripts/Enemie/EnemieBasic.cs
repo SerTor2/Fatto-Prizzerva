@@ -24,14 +24,14 @@ public class EnemieBasic : MonoBehaviour
         {
             characterController.Move(direction * speedEmpuje * Time.deltaTime);
             currentTime += Time.deltaTime;
-            if(currentTime >= maxTime)
+            if (currentTime >= maxTime)
             {
                 currentTime = 0;
             }
         }
         else
         {
-            if(player.gameObject.activeSelf)
+            if (player.gameObject.activeSelf)
                 characterController.Move((player.gameObject.transform.position - gameObject.transform.position).normalized * speed * Time.deltaTime);
         }
     }

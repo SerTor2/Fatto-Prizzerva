@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: c2b0b01e0fc9910408d9deaca3455942
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences:
+  - boardSettings: {fileID: 11400000, guid: 53818b1911d3f8c45973e2058ff280d1, type: 2}
+  - NormalCell: {fileID: 3742590993342828331, guid: 4eeeed1883cecbb43ba5b1f3d1d8e019,
+      type: 3}
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
