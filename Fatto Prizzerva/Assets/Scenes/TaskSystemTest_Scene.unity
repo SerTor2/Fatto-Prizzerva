@@ -197,6 +197,7 @@ GameObject:
   m_Component:
   - component: {fileID: 306368083}
   - component: {fileID: 306368084}
+  - component: {fileID: 306368085}
   m_Layer: 0
   m_Name: GameManager
   m_TagString: Untagged
@@ -230,16 +231,33 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e79fdd454bed63c47b74d184fdfeeced, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  gameController: {fileID: 0}
   blackboard: {fileID: 11400000, guid: 84f6ed1f2de314744a168abd29f9f761, type: 2}
   tasksCanvasController: {fileID: 1635662908}
-  tickPerSecond: 4
+  tickPerSecond: 1
   gameTasks:
   - {fileID: 11400000, guid: 83eee7e8fa9603540be5fefb409c76ff, type: 2}
   - {fileID: 11400000, guid: 625dfed1b075f654c817ca2f677a8ea2, type: 2}
   - {fileID: 11400000, guid: 20a69652644d41d4b8d71ccef7883e9f, type: 2}
+  - {fileID: 11400000, guid: 21606d4e99498fd4982e759fb57f8753, type: 2}
+  - {fileID: 11400000, guid: 736381cdd8b9a884aac81fdc9871e9f9, type: 2}
+  - {fileID: 11400000, guid: 441c89c00977bb84f8f3863cdf8109ba, type: 2}
   activeTasks: []
   achievedTasks: []
   failedTasks: []
+--- !u!114 &306368085
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 306368082}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 10ef0cd58d4bcd745b5b0be5a85c7236, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  player: {fileID: 0}
 --- !u!1 &394493037
 GameObject:
   m_ObjectHideFlags: 0
@@ -528,7 +546,7 @@ Camera:
   m_GameObject: {fileID: 799796672}
   m_Enabled: 1
   serializedVersion: 2
-  m_ClearFlags: 1
+  m_ClearFlags: 2
   m_BackGroundColor: {r: 0.19215687, g: 0.3019608, b: 0.4745098, a: 0}
   m_projectionMatrixMode: 1
   m_SensorSize: {x: 36, y: 24}
@@ -981,6 +999,12 @@ MonoBehaviour:
   failedTasksContainer: {fileID: 0}
   canvasedTasks_Lst: []
   isTransitioning: 0
+  normalStyle: 0
+  achievedStyle: 64
+  failedStyle: 2
+  inProgressStyle: 0
+  customFontStyle: 0
+  colorMode: 0
 --- !u!225 &1635662909
 CanvasGroup:
   m_ObjectHideFlags: 0

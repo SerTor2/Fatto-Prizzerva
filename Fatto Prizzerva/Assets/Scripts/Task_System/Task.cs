@@ -9,7 +9,7 @@ namespace Tasks
 
     public enum TaskStatus
     {
-        NONE = -3,                       // ERROR AND INITIAL STATE
+        NONE = -3,                  // ERROR AND INITIAL STATE
         ACHIEVED = 1,               // resultado positivo
         IN_PROGRESS = 0,            // en progreso (sigue haciendo el check)
         FAILED = -1                 // resultado negativo (fallaste wey)
@@ -18,10 +18,15 @@ namespace Tasks
     public abstract class Task : ScriptableObject
     {
         protected TasksBlackboard blackboard;
+        System.Random rnd;
+
         [SerializeField] protected string taskName = "NONE";
         [SerializeField] [TextArea] private string taskDescription = "NONE";
 
-        System.Random rnd;
+        [Header("Reward")]
+        [SerializeField] private Reward reward;
+
+        [Header("Identification")]
         [SerializeField] private int taskId;
         private static List<int> tasksIdOnUse;              // ID EN USO
 
@@ -29,10 +34,6 @@ namespace Tasks
         protected TaskStatus CurrentTaskState { get => currentTaskState; set => currentTaskState = value; }
         private TaskStatus previousState;
         protected TaskStatus PreviousState { get => previousState; set => previousState = value; }
-
-        //[Header("Events")] 
-        //public UnityEvent OnCompletion_Evnt;
-        //public UnityEvent OnFail_Evnt;
 
 
         public TaskStatus GetPreviousTaskState()
@@ -82,7 +83,6 @@ namespace Tasks
         }
 
 
-
         // funcion de update (en el caso de ser necesrio)
         public virtual void Tick(float _deltaTime)
         {
@@ -107,6 +107,14 @@ namespace Tasks
 
             //Debug.LogError(taskId);
             tasksIdOnUse.Add(taskId);
+        }
+
+        public void ApplyReward (TestPlayer _player)
+        {
+            if (reward)
+            {
+                Debug.Log("Aplicando recompensa");
+            }
         }
 
     }

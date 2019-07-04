@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 70cd03cbb302626428f3605e01923a9b, type: 3}
   m_Name: Move to 10
   m_EditorClassIdentifier: 
-  taskName: Move up you BASTARD
+  taskName: Move up to 10
   taskDescription: NONE
   taskId: 1
   objectToFollow: {fileID: 0}

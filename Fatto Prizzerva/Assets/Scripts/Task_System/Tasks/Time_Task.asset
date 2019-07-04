@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 86029998350976c4a84a65478cf194ce, type: 3}
   m_Name: Time_Task
   m_EditorClassIdentifier: 
-  taskName: NONE
+  taskName: Time Task
   taskDescription: NONE
   taskId: 3
   targetTime: 10

@@ -12,6 +12,7 @@ namespace Tasks
         // singleton
         private static TasksManager _instance;
         public static TasksManager Instance { get { return _instance; } }
+        public PseudoGM gameController;
 
         [SerializeField] private TasksBlackboard blackboard;
 
@@ -90,7 +91,12 @@ namespace Tasks
                         // si hemos completado la tarea avisamos al manager visual para que la quite
                         if (task.GetCurrentTaskState() == TaskStatus.ACHIEVED)
                         {
-                            tasksCanvasController.RemoveTaskFromCanvas(task);
+                            // --------------------- DEPENDANT ------------------------ //
+                            task.ApplyReward(gameController.Player);            // aplicamos recompensa al jugador (ahora mismo es algo directo)
+                            // --------------------- -------- ------------------------ //
+
+
+                            tasksCanvasController.UpdatetaskStatus(task);
                         }
 
                         return;
@@ -118,12 +124,21 @@ namespace Tasks
             return gameTasks;
         }
 
-
-        public Task GetTask(int _taskID, List<Task> _taskToLookFrom)
+        public bool GetAllTasksComplete()
         {
+            if (activeTasks.Count == 0)
+                return true;
+            else
+                return false;
+        }
+
+        public Task GetTask(int _taskID, List<Task> _tasksListToSearchFrom)
+        {
+            Task currentTask;
+
             for (int index = 0; index < gameTasks.Count; index++)
             {
-                Task currentTask = gameTasks[index];
+                currentTask = gameTasks[index];
 
                 // if is a complex task we start doing recursion ............................. //
                 if (currentTask is ComplexTask)
@@ -298,6 +313,10 @@ namespace Tasks
                     Debug.LogError("ERROR_TASKS: Someghing went wrong, make sure the task " + _task.name + " of type " + _task.GetType() + " inherits properly");
                     break;
             }
+
+            // asi es como deberia estar
+            // tasksCanvasController.UpdatetaskStatus(_task);
+
         }
 
         #endregion

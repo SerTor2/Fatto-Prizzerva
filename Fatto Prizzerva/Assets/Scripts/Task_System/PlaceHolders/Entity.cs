@@ -17,7 +17,7 @@ public class Entity : MonoBehaviour
     }
     public void OnDeath()
     {
-        death?.Invoke();        // esto llamara a los metodos del delegado
+        death.Invoke();        // esto llamara a los metodos del delegado
     }
     private void SayHi()
     {
@@ -28,7 +28,7 @@ public class Entity : MonoBehaviour
 
     private void Awake()
     {
-        death += SayHi;
+        SubscriveToDeathEvent(SayHi);
     }
 
     private void Update()
