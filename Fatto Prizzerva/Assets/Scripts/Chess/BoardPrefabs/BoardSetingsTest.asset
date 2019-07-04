@@ -12,7 +12,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 629e01bd4af9fd749aaf5a5849c08506, type: 3}
   m_Name: BoardSetingsTest
   m_EditorClassIdentifier: 
-  cells:
-  - cellPrefab: {fileID: 1910393972270484079, guid: 1ca9ae36b1275da41a2b67f6323d5c96,
-      type: 3}
-    position: {x: 3, y: 3}
+  cells: []

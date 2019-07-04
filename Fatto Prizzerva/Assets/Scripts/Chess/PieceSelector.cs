@@ -5,9 +5,11 @@ using UnityEngine;
 
 public class PieceSelector : MonoBehaviour
 {
+    public ChessPlayer player;
+
     public Piece selectedPiece;
 
-    void Update()
+    private void Update()
     {
         if (Input.GetMouseButtonDown(0)) SelectPiece();
         if (Input.GetMouseButtonDown(1)) MovePiece();
@@ -21,10 +23,11 @@ public class PieceSelector : MonoBehaviour
 
         if (selectedCell == null) return;
 
-        for (int i = 0; i < selectedPiece.MovePositions.Length; i++)
+        for (int i = 0; i < selectedPiece.MovePositions.Count; i++)
         {
             if (selectedCell.position == selectedPiece.MovePositions[i])
             {
+                player.movements -= selectedPiece.CalculateCost(selectedPiece.MovePositions[i]);
                 selectedPiece.Move(selectedPiece.MovePositions[i]);
             }
         }
@@ -36,7 +39,10 @@ public class PieceSelector : MonoBehaviour
 
         selectedPiece = GetFromRay<Piece>();
 
-        if (selectedPiece) selectedPiece.Selected(true);
+        if (!selectedPiece) return;
+
+        if (selectedPiece.AIcontrolled) selectedPiece = null;
+        else selectedPiece.Selected(true);
     }
 
     private void Deselect()

@@ -17,6 +17,8 @@ public class Board : MonoBehaviour
 
     public Cell NormalCell;
 
+    public List<SpriteRenderer> validPosition;
+
     private void Awake()
     {
         if (instance == null) instance = this;
@@ -93,6 +95,14 @@ public class Board : MonoBehaviour
                 else
                     Gizmos.DrawCube(new Vector3(x, 0, y), Vector3.one);
             }
+        }
+    }
+
+    public void ClearValidPositions()
+    {
+        foreach (SpriteRenderer sprite in validPosition)
+        {
+            sprite.enabled = false;
         }
     }
 }
