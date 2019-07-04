@@ -45,7 +45,7 @@ namespace Tasks
 
         }
 
-        // SETTERS -------------------------------------------- //
+        // SETTERS -------------------------------------------- /
         public void SetPinned(Toggle _toggleComponent)
         {
             isPined = _toggleComponent.isOn;
@@ -85,11 +85,16 @@ namespace Tasks
             }
 
         }
-        public void UpdateVisualStyle(TMPro.FontStyles _newStyle)
+        private void UpdateVisualStyle(TMPro.FontStyles _newStyle)
         {
             taskName.fontStyle = _newStyle;
         }
+        public void UpdateVisualStyle (CustomFontStyle _newStyle)
+        {
+            _newStyle.ApplyStyleToText(taskName);
+        }
 
+        // MAIN --------------------------------------------- //
         public void SetupData(Task _task, bool _mindDescription)
         {
             hostTask = _task;
@@ -100,7 +105,6 @@ namespace Tasks
             if (_mindDescription)
                 taskDescription.text = hostTask.GetDescription();
 
-            //Debug.Log(this.transform.GetSiblingIndex() + " sibling index " + this.hostTask.name);
         }
 
 

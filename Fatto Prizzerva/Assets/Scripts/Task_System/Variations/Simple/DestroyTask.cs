@@ -13,7 +13,7 @@ namespace Tasks
         // seria muy guay el poder hacer que este objeto se subscriva a un evento de destruccion del objeto 
         // y que al SER DESTRUIDO llame a su evdnto y por tanto esta tarea sienta las repercusiones
 
-        [SerializeField] private MonoBehaviour objectToDestroy;
+        [SerializeField] private GameObject objectToDestroy;
         private bool isObjectDestroyed;
 
         // dani falta el setup en el cual adquiriras el objeto y te subscriviras a su evento de muerte OnDestruction o OnDestroy
@@ -21,7 +21,7 @@ namespace Tasks
         {
             base.Setup(_blackboard);
 
-
+            objectToDestroy = _blackboard.destroyTarget;
         }
 
 

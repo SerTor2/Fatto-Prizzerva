@@ -16,6 +16,15 @@ namespace Tasks
         [Header("Enemy related Data")]
         public GameObject placeh9lder;
 
+        // Data classified for each type of task
+        // ----------------------------------------------------------------------------- //
+        [Header("Reach TASK")] 
+        public Transform reachTarget;
+        // ----------------------------------------------------------------------------- //
+        [Header("Destroy TASK")]
+        public GameObject destroyTarget;
+        // ----------------------------------------------------------------------------- //
+
 
         // setup the data of the blackboard 
         public void Setup(TestPlayer _player)

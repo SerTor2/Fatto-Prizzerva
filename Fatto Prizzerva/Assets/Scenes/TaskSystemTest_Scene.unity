@@ -242,6 +242,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 21606d4e99498fd4982e759fb57f8753, type: 2}
   - {fileID: 11400000, guid: 736381cdd8b9a884aac81fdc9871e9f9, type: 2}
   - {fileID: 11400000, guid: 441c89c00977bb84f8f3863cdf8109ba, type: 2}
+  - {fileID: 11400000, guid: 9632b9f53c13d8f43aa4dd216edcfea1, type: 2}
   activeTasks: []
   achievedTasks: []
   failedTasks: []
@@ -999,12 +1000,10 @@ MonoBehaviour:
   failedTasksContainer: {fileID: 0}
   canvasedTasks_Lst: []
   isTransitioning: 0
-  normalStyle: 0
-  achievedStyle: 64
-  failedStyle: 2
-  inProgressStyle: 0
-  customFontStyle: 0
-  colorMode: 0
+  normalStyle: {fileID: 11400000, guid: 7fe61d0153af0fe4d9fe984504daab8e, type: 2}
+  achievedStyle: {fileID: 11400000, guid: b8bfab4d048978d4eaa2695ad9f43895, type: 2}
+  failedStyle: {fileID: 11400000, guid: 58da43cc66b71814394c453db8f16624, type: 2}
+  inProgressStyle: {fileID: 11400000, guid: fac0c0ce26dda2f42b102fbbc0f0c79d, type: 2}
 --- !u!225 &1635662909
 CanvasGroup:
   m_ObjectHideFlags: 0

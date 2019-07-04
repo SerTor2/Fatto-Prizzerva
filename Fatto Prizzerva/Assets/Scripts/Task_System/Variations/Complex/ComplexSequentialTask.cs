@@ -60,6 +60,7 @@ namespace Tasks
 
         public override void Tick(float _deltaTime)
         {
+            // only update the engaged task
             tasksToAcomplish[currentTaskIndex].Tick(_deltaTime);   
         }
 

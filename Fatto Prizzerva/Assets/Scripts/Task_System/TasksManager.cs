@@ -88,15 +88,16 @@ namespace Tasks
                     // CHECK 
                     if (CheckTask(task))
                     {
+
                         // si hemos completado la tarea avisamos al manager visual para que la quite
                         if (task.GetCurrentTaskState() == TaskStatus.ACHIEVED)
                         {
                             // --------------------- DEPENDANT ------------------------ //
-                            task.ApplyReward(gameController.Player);            // aplicamos recompensa al jugador (ahora mismo es algo directo)
+                            //task.ApplyReward(gameController.Player);            // aplicamos recompensa al jugador (ahora mismo es algo directo)
                             // --------------------- -------- ------------------------ //
 
-
                             tasksCanvasController.UpdatetaskStatus(task);
+
                         }
 
                         return;
@@ -254,6 +255,8 @@ namespace Tasks
             if ((int)previousTaskState != (int)newTaskState)
             {
                 SetTaskCategory(_task, newTaskState, previousTaskState);
+                tasksCanvasController.UpdatetaskStatus(_task);
+            
                 return true;
             }
             else

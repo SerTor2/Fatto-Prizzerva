@@ -31,13 +31,17 @@ namespace Tasks
         public bool isTransitioning = false;        // flag to control if the animation is playing   
 
         [Header("Estilos visualess")]
-        public FontStyles normalStyle;
-        public FontStyles achievedStyle;
-        public FontStyles failedStyle;
-        public FontStyles inProgressStyle;
+        public CustomFontStyle normalStyle;
+        public CustomFontStyle achievedStyle;
+        public CustomFontStyle failedStyle;
+        public CustomFontStyle inProgressStyle;
+        //public FontStyles normalStyle;
+        //public FontStyles achievedStyle;
+        //public FontStyles failedStyle;
+        //public FontStyles inProgressStyle;
 
-        public FontStyle customFontStyle;
-        public TMPro.ColorMode colorMode;
+        //public FontStyle customFontStyle;
+        //public TMPro.ColorMode colorMode;
 
 
         // GETTERS ---------------------------------------- //
@@ -188,16 +192,19 @@ namespace Tasks
 
                 case TaskStatus.ACHIEVED:
                     //RemoveTaskFromCanvas(_task);            // TEMPORAL
+                    //_targetVisualTask.UpdateVisualStyle(achievedStyle);
                     _targetVisualTask.UpdateVisualStyle(achievedStyle);
 
                     break;
 
                 case TaskStatus.IN_PROGRESS:
+                    //_targetVisualTask.UpdateVisualStyle(inProgressStyle);
                     _targetVisualTask.UpdateVisualStyle(inProgressStyle);
 
                     break;
 
                 case TaskStatus.FAILED:
+                    //_targetVisualTask.UpdateVisualStyle(failedStyle);
                     _targetVisualTask.UpdateVisualStyle(failedStyle);
                     break;
 
