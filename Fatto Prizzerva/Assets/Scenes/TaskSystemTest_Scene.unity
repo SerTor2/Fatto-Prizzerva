@@ -197,7 +197,6 @@ GameObject:
   m_Component:
   - component: {fileID: 306368083}
   - component: {fileID: 306368084}
-  - component: {fileID: 306368085}
   m_Layer: 0
   m_Name: GameManager
   m_TagString: Untagged
@@ -234,31 +233,42 @@ MonoBehaviour:
   gameController: {fileID: 0}
   blackboard: {fileID: 11400000, guid: 84f6ed1f2de314744a168abd29f9f761, type: 2}
   tasksCanvasController: {fileID: 1635662908}
-  tickPerSecond: 1
-  gameTasks:
-  - {fileID: 11400000, guid: 83eee7e8fa9603540be5fefb409c76ff, type: 2}
-  - {fileID: 11400000, guid: 625dfed1b075f654c817ca2f677a8ea2, type: 2}
-  - {fileID: 11400000, guid: 20a69652644d41d4b8d71ccef7883e9f, type: 2}
-  - {fileID: 11400000, guid: 21606d4e99498fd4982e759fb57f8753, type: 2}
-  - {fileID: 11400000, guid: 736381cdd8b9a884aac81fdc9871e9f9, type: 2}
-  - {fileID: 11400000, guid: 441c89c00977bb84f8f3863cdf8109ba, type: 2}
-  - {fileID: 11400000, guid: 9632b9f53c13d8f43aa4dd216edcfea1, type: 2}
+  updatesPerSecond: 1
+  checksPerSecond: 1
+  gameTasks: []
   activeTasks: []
   achievedTasks: []
   failedTasks: []
---- !u!114 &306368085
-MonoBehaviour:
+--- !u!1 &329330119
+GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 306368082}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 10ef0cd58d4bcd745b5b0be5a85c7236, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  player: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 329330120}
+  m_Layer: 0
+  m_Name: Origin
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &329330120
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 329330119}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 7
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &394493037
 GameObject:
   m_ObjectHideFlags: 0
@@ -479,6 +489,7 @@ GameObject:
   m_Component:
   - component: {fileID: 617940086}
   - component: {fileID: 617940085}
+  - component: {fileID: 617940087}
   m_Layer: 0
   m_Name: PseudoEnemy
   m_TagString: Enemie
@@ -498,6 +509,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 27b9a3c848785664e8b660f36d7314f5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  destroyTaskInteraction: {fileID: 617940087}
 --- !u!4 &617940086
 Transform:
   m_ObjectHideFlags: 0
@@ -512,6 +524,20 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 6
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &617940087
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 617940084}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 419c8cf2e96ca6947883d56cf319161b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  targetTask: {fileID: 11400000, guid: 21606d4e99498fd4982e759fb57f8753, type: 2}
+  objectToDestroy: {fileID: 617940085}
 --- !u!1 &799796672
 GameObject:
   m_ObjectHideFlags: 0
@@ -673,6 +699,15 @@ GameObject:
   m_Component:
   - component: {fileID: 895371045}
   - component: {fileID: 895371046}
+  - component: {fileID: 895371047}
+  - component: {fileID: 895371051}
+  - component: {fileID: 895371050}
+  - component: {fileID: 895371049}
+  - component: {fileID: 895371048}
+  - component: {fileID: 895371055}
+  - component: {fileID: 895371054}
+  - component: {fileID: 895371053}
+  - component: {fileID: 895371052}
   m_Layer: 0
   m_Name: PseudoPlayer
   m_TagString: Player
@@ -706,6 +741,133 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2f25aa7fbcb8bcc468f591ebade244a6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  reachPositionTaskInteraction: {fileID: 895371047}
+--- !u!114 &895371047
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 895371044}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cf43a524445626b48a0c4c2eb483c931, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  targetTask: {fileID: 11400000, guid: 625dfed1b075f654c817ca2f677a8ea2, type: 2}
+  objectToFollow: {fileID: 895371044}
+  targetObject: {fileID: 329330119}
+--- !u!114 &895371048
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 895371044}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 419c8cf2e96ca6947883d56cf319161b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  targetTask: {fileID: 0}
+  objectToDestroy: {fileID: 0}
+--- !u!114 &895371049
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 895371044}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 419c8cf2e96ca6947883d56cf319161b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  targetTask: {fileID: 0}
+  objectToDestroy: {fileID: 0}
+--- !u!114 &895371050
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 895371044}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 419c8cf2e96ca6947883d56cf319161b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  targetTask: {fileID: 0}
+  objectToDestroy: {fileID: 0}
+--- !u!114 &895371051
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 895371044}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d78f6c072823197418a0c382024079e9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  targetTask: {fileID: 11400000, guid: 736381cdd8b9a884aac81fdc9871e9f9, type: 2}
+--- !u!114 &895371052
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 895371044}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 419c8cf2e96ca6947883d56cf319161b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  targetTask: {fileID: 0}
+  objectToDestroy: {fileID: 0}
+--- !u!114 &895371053
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 895371044}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 419c8cf2e96ca6947883d56cf319161b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  targetTask: {fileID: 0}
+  objectToDestroy: {fileID: 0}
+--- !u!114 &895371054
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 895371044}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 419c8cf2e96ca6947883d56cf319161b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  targetTask: {fileID: 0}
+  objectToDestroy: {fileID: 0}
+--- !u!114 &895371055
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 895371044}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 419c8cf2e96ca6947883d56cf319161b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  targetTask: {fileID: 0}
+  objectToDestroy: {fileID: 0}
 --- !u!1 &1008646103
 GameObject:
   m_ObjectHideFlags: 0

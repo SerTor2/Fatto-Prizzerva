@@ -38,7 +38,6 @@ namespace Tasks
 
             manager = (TasksManager)target;
 
-
             EditorGUILayout.LabelField("Game Tasks Status\r\n");
             EditorGUILayout.HelpBox(debugInfo, MessageType.Warning,true);
 

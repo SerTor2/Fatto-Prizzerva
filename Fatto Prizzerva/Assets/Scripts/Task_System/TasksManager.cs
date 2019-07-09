@@ -20,8 +20,11 @@ namespace Tasks
         [SerializeField] private TasksCanvasController tasksCanvasController;
 
         [Header("Perfomance")]
-        [SerializeField] private int tickPerSecond;
-        private float currentTime;
+        [SerializeField] private int updatesPerSecond;
+        private float currentUpdateTime;
+        private float timeForUpdate;
+        [SerializeField] private int checksPerSecond;
+        private float currentCheckTime;
         private float timeForCheck;
 
         [Header("Task Lists")]
@@ -29,6 +32,7 @@ namespace Tasks
         [SerializeField] private List<Task> activeTasks;            // tasks being checked
         [SerializeField] private List<Task> achievedTasks;          // tasks completed SUCCESFULLY
         [SerializeField] private List<Task> failedTasks;            // tasks completed in FAILURE
+
 
 
         #region ENGINE METHODS
@@ -54,61 +58,63 @@ namespace Tasks
 
 
             // Performance setup
-            timeForCheck = ((1.0000f / (float)tickPerSecond) * 0.6000f);     // ticks per second caching
+            timeForUpdate = ((1.0000f / (float)updatesPerSecond) * 0.6000f);     // ticks per second caching
+            timeForCheck = ((1.0000f / (float)checksPerSecond) * 0.6000f);     // ticks per second caching
 
             // initializations
-            activeTasks = new List<Task>();
-            achievedTasks = new List<Task>();
-            failedTasks = new List<Task>();
+            //activeTasks = new List<Task>();
+            //achievedTasks = new List<Task>();
+            //failedTasks = new List<Task>();
 
             TasksBlackboardSetup();
 
-            TasksSetup();
+            //foreach (Task task in gameTasks)
+            //{
+            //    SetupTask(task);
+            //}
 
         }
 
         private void Start()
         {
-            foreach (Task task in activeTasks)
-            {
-                tasksCanvasController.AddTaskToCanvas(task);
-            }
+   
 
         }
 
 
         private void Update()
         {
-            currentTime += Time.deltaTime;
-            if (currentTime >= timeForCheck)
+            currentUpdateTime += Time.deltaTime;
+            currentCheckTime += Time.deltaTime;
+
+            // CHECK ------------------------------------------------------------------------ //
+            if (currentCheckTime >= timeForCheck)
+            {
+                foreach (Task task in gameTasks)
+                {
+                    CheckTask(task);
+
+                    // si hemos completado la tarea avisamos al manager visual para que la quite
+                    if (task.GetCurrentTaskState() == TaskStatus.ACHIEVED)
+                    {
+                        // --------------------- DEPENDANT ------------------------ //
+                        //task.ApplyReward(gameController.Player);            // aplicamos recompensa al jugador (ahora mismo es algo directo)
+                        // --------------------- -------- ------------------------ //
+                        //tasksCanvasController.UpdatetaskStatus(task);
+                    }
+                }
+                currentCheckTime = 0f;
+            }
+
+            // UPDATE ------------------------------------------------------------------------ //
+            if (currentUpdateTime >= timeForUpdate)
             {
                 // check for completion and tick
                 foreach (Task task in activeTasks)
                 {
-                    // CHECK 
-                    if (CheckTask(task))
-                    {
-
-                        // si hemos completado la tarea avisamos al manager visual para que la quite
-                        if (task.GetCurrentTaskState() == TaskStatus.ACHIEVED)
-                        {
-                            // --------------------- DEPENDANT ------------------------ //
-                            //task.ApplyReward(gameController.Player);            // aplicamos recompensa al jugador (ahora mismo es algo directo)
-                            // --------------------- -------- ------------------------ //
-
-                            tasksCanvasController.UpdatetaskStatus(task);
-
-                        }
-
-                        return;
-                    }
-
-
-                    // TICK
                     TickTask(task);
                 }
-
-                currentTime = 0f;
+                currentUpdateTime = 0f;
             }
         }
 
@@ -170,17 +176,13 @@ namespace Tasks
         {
             // Is it the task we are looking for?
             if (_taskToCheck.GetTaskId() == _targetIndex)
-            {
                 return true;
-
-            }
             else
-            {
                 return false;
-            }
+            
         }
 
-
+        
 
         public static TasksManager GetInstance()
         {
@@ -209,26 +211,48 @@ namespace Tasks
 
         }
 
-
-        #endregion
-
-        #region PRIVATE METHODS
-
-        private void TasksBlackboardSetup()
+        public void SetupTask(Task _task, TaskData _taskInitializationData, bool _addToActiveTasks = true)
         {
-            blackboard.Player = GameObject.FindGameObjectWithTag("Player").GetComponent<TestPlayer>();
-        }
+            if (!(gameTasks.Contains(_task)))
+                gameTasks.Add(_task);
 
-        private void TasksSetup()
-        {
-            foreach (Task task in gameTasks)
+            // le damos la informacion comun de todas las tareas
+            _task.Setup(blackboard);
+
+            tasksCanvasController.AddTaskToCanvas(_task);
+            tasksCanvasController.UpdatetaskStatus(_task);
+
+            // le pasamos los datos que pueda necesitar
+            if (_task is ReachTask)
+                (_task as ReachTask).SetTaskData(_taskInitializationData);
+            if (_task is DestroyTask)
+                (_task as DestroyTask).SetTaskData(_taskInitializationData);
+
+
+
+            // debido a la propia recursividad de este metodo y el hecho que no queremos que todas las subtareas se añadan a las tareas activas utilizaremos el flag
+            if (_addToActiveTasks)
+                ActivateTask(_task, true);
+
+            // Propagation
+            if (_task is ComplexTask)
             {
-                SetupTask(task);
+                // buscamos sus hijos
+                foreach (Task task in (_task as ComplexTask).GetTasksList())
+                {
+                    SetupTask(task, false);
+                }
             }
         }
-        private void SetupTask(Task _task, bool _addToActiveTasks = true)
+        public void SetupTask(Task _task, bool _addToActiveTasks = true)
         {
-            _task.Setup(blackboard);          // lo idoneo es que cada objeto se apañe para setupearse
+
+
+            // le damos la informacion comun de todas las tareas
+            _task.Setup(blackboard);
+
+            tasksCanvasController.AddTaskToCanvas(_task);
+            tasksCanvasController.UpdatetaskStatus(_task);
 
             // debido a la propia recursividad de este metodo y el hecho que no queremos que todas las subtareas se añadan a las tareas activas utilizaremos el flag
             if (_addToActiveTasks)
@@ -245,6 +269,21 @@ namespace Tasks
             }
         }
 
+        #endregion
+
+        #region PRIVATE METHODS
+
+        private void TasksBlackboardSetup()
+        {
+            blackboard.Player = GameObject.FindGameObjectWithTag("Player").GetComponent<TestPlayer>();
+        }
+
+        private void TasksSetup()
+        {
+            
+        }
+        
+
         private bool CheckTask(Task _task)
         {
             TaskStatus previousTaskState = _task.GetPreviousTaskState();
@@ -256,7 +295,7 @@ namespace Tasks
             {
                 SetTaskCategory(_task, newTaskState, previousTaskState);
                 tasksCanvasController.UpdatetaskStatus(_task);
-            
+
                 return true;
             }
             else
@@ -268,7 +307,7 @@ namespace Tasks
 
         private void TickTask(Task _task)
         {
-            _task.Tick(timeForCheck);
+            _task.Tick(timeForUpdate);
         }
 
         private void SetTaskCategory(Task _task, TaskStatus _newStatus, TaskStatus _previousStatus = TaskStatus.NONE)

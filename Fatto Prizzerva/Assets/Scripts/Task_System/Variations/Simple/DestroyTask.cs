@@ -10,20 +10,20 @@ namespace Tasks
     [CreateAssetMenu(fileName = "Destroy_Task", menuName = "Tasks/Destroy_Entity")]
     public class DestroyTask : SimpleTask
     {
-        // seria muy guay el poder hacer que este objeto se subscriva a un evento de destruccion del objeto 
-        // y que al SER DESTRUIDO llame a su evdnto y por tanto esta tarea sienta las repercusiones
-
-        [SerializeField] private GameObject objectToDestroy;
+        private MonoBehaviour objectToDestroy;
         private bool isObjectDestroyed;
 
-        // dani falta el setup en el cual adquiriras el objeto y te subscriviras a su evento de muerte OnDestruction o OnDestroy
         public override void Setup(TasksBlackboard _blackboard)
         {
             base.Setup(_blackboard);
-
-            objectToDestroy = _blackboard.destroyTarget;
         }
 
+
+        protected override void OnEnable()
+        {
+            base.OnEnable();
+            isObjectDestroyed = false;
+        }
 
         public override TaskStatus Check()
         {
@@ -38,7 +38,16 @@ namespace Tasks
 
         }
 
+        public override void ForceTaskFinish(TaskStatus _desiredEndStatus)
+        {
+            // base.ForceTaskFinish(_desiredEndStatus);
+            isObjectDestroyed = true;
+        }
+
+
     }
+
+     
 }
 
 

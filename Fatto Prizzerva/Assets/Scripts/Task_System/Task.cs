@@ -67,21 +67,23 @@ namespace Tasks
         }
 
 
-        // setup para tareas que NO REQUIERAN DE BLACKBOARD
-        public virtual void Setup()           
-        {
-            // Override this method
-            SetRandomId();
-        }
-        // setup para tareas que REQUIERAN DE BLACKBOARD
+
+        // setup para tareas que REQUIERAN DE BLACKBOARD (datos generales)
         public virtual void Setup (TasksBlackboard _blackboard)
         {
             blackboard = _blackboard;
             SetRandomId();
             // Override this method
+        }
+        public virtual void SetTaskData()
+        {
 
         }
-
+        public virtual void SetTaskData(TaskData _taskDataPackage)
+        {
+            // override this method for each task that needs additional wordl info
+        }
+        
 
         // funcion de update (en el caso de ser necesrio)
         public virtual void Tick(float _deltaTime)
@@ -115,6 +117,13 @@ namespace Tasks
             {
                 Debug.Log("Aplicando recompensa");
             }
+        }
+
+        // external way of making a task end 
+        public virtual void ForceTaskFinish(TaskStatus _desiredEndStatus = TaskStatus.ACHIEVED)
+        {
+            if (_desiredEndStatus != TaskStatus.NONE) 
+                currentTaskState = _desiredEndStatus;
         }
 
     }

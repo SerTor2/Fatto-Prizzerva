@@ -12,10 +12,9 @@ namespace Tasks
     {
 
         [Header("Task Specific Atributes")]
-        [SerializeField] private GameObject objectToFollow;     
-        [SerializeField] private Vector3 targetPosition;
-        [SerializeField] private Transform targetTransform;
-        // temporal (poner en algun tipo de archivo config)
+        private GameObject objectToFollow;     
+        private Transform targetTransform;
+
         [Header("Control")]
         [SerializeField] float targetRadius = 0.1f;         // margen de error para el calculo de la distancia al objetivo
 
@@ -25,10 +24,15 @@ namespace Tasks
             base.Setup(_blackboard);
 
             objectToFollow = _blackboard.Player.gameObject;
-            targetTransform = _blackboard.reachTarget;
         }
 
-        // check for completion of the task (currently you can not fail it)
+        public override void SetTaskData(TaskData _taskData)
+        {
+            objectToFollow = (_taskData as ReachTaskData).GetObjectToFollow();
+            targetTransform = (_taskData as ReachTaskData).GetTargetObject().transform;
+        }
+
+        // check for completion of the task 
         public override TaskStatus Check()
         {
 
@@ -48,6 +52,9 @@ namespace Tasks
 
 
     }
+
+
+    
 }
 
 

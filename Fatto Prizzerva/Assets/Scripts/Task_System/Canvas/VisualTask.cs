@@ -15,6 +15,7 @@ namespace Tasks
         [Header("GUI")]
         [SerializeField] private TextMeshProUGUI taskName;
         [SerializeField] private TextMeshProUGUI taskDescription;
+        [SerializeField] private TaskStatus currentTaskStatus;
 
         [Header("Control")]           
         [SerializeField] private bool isPined;
@@ -92,6 +93,10 @@ namespace Tasks
         public void UpdateVisualStyle (CustomFontStyle _newStyle)
         {
             _newStyle.ApplyStyleToText(taskName);
+        }
+        public void SetCurrentStateDebug(TaskStatus _taskState)
+        {
+            currentTaskStatus = _taskState;
         }
 
         // MAIN --------------------------------------------- //

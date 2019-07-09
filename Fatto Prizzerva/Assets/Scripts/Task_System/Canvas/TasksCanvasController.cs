@@ -58,7 +58,7 @@ namespace Tasks
             //if (activeTasksContainer == null || completedTasksContainer == null || failedTasksContainer == null)
             //    Debug.LogError("ERROR_TASKS_CANVAS_CONTROLLER: Faltan asignar transformadas del canvas");
 
-            canvasedTasks_Lst = new List<VisualTask>();
+            //canvasedTasks_Lst = new List<VisualTask>();
 
             isPanelActive = (tasksCanvasGroup.alpha == 1f) ? 
                 (isPanelActive = true) : (isPanelActive = false);
@@ -140,10 +140,10 @@ namespace Tasks
         /// <returns></returns>
         private VisualTask LocateTaskRelative( Task _task)
         {
+
             foreach (VisualTask visualTask in canvasedTasks_Lst)
             {
                 Task _referencedTask = visualTask.GetReferencedTask();
-                Debug.Log(_referencedTask);
 
                 if (_referencedTask == _task)
                 {
@@ -194,18 +194,23 @@ namespace Tasks
                     //RemoveTaskFromCanvas(_task);            // TEMPORAL
                     //_targetVisualTask.UpdateVisualStyle(achievedStyle);
                     _targetVisualTask.UpdateVisualStyle(achievedStyle);
+                    _targetVisualTask.SetCurrentStateDebug(newTaskStatus);
 
                     break;
 
                 case TaskStatus.IN_PROGRESS:
                     //_targetVisualTask.UpdateVisualStyle(inProgressStyle);
                     _targetVisualTask.UpdateVisualStyle(inProgressStyle);
+                    _targetVisualTask.SetCurrentStateDebug(newTaskStatus);
+
 
                     break;
 
                 case TaskStatus.FAILED:
                     //_targetVisualTask.UpdateVisualStyle(failedStyle);
                     _targetVisualTask.UpdateVisualStyle(failedStyle);
+                    _targetVisualTask.SetCurrentStateDebug(newTaskStatus);
+
                     break;
 
                 default:
