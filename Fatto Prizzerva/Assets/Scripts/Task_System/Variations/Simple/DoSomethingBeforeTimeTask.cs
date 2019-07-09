@@ -18,6 +18,7 @@ namespace Tasks
         {
             base.OnEnable();
             currentTime = targetTime;
+            TaskInterface_Type = typeof(DoBeforeTimeInterface);
         }
 
         public override void Tick(float _deltaTime)

@@ -18,6 +18,7 @@ namespace Tasks
     public abstract class Task : ScriptableObject
     {
         protected TasksBlackboard blackboard;
+        private Type taskInterface_Type;                    // interface the task uses in order to comunicate with
         System.Random rnd;
 
         [SerializeField] protected string taskName = "NONE";
@@ -30,11 +31,13 @@ namespace Tasks
         [SerializeField] private int taskId;
         private static List<int> tasksIdOnUse;              // ID EN USO
 
+
+
         private TaskStatus currentTaskState;
         protected TaskStatus CurrentTaskState { get => currentTaskState; set => currentTaskState = value; }
         private TaskStatus previousState;
         protected TaskStatus PreviousState { get => previousState; set => previousState = value; }
-
+        public Type TaskInterface_Type { get => taskInterface_Type; protected set => taskInterface_Type = value; }
 
         public TaskStatus GetPreviousTaskState()
         {
@@ -64,6 +67,8 @@ namespace Tasks
 
             if (taskName == "") taskName = "UNNNAMED_TASK";
             if (taskDescription == "") taskDescription = "NODESCRIPTION_SET";
+
+
         }
 
 
@@ -111,11 +116,11 @@ namespace Tasks
             tasksIdOnUse.Add(taskId);
         }
 
-        public void ApplyReward (TestPlayer _player)
+        public void ApplyReward (Entity _targetOfTheReward)
         {
             if (reward)
             {
-                Debug.Log("Aplicando recompensa");
+                reward.ApplyReward();
             }
         }
 

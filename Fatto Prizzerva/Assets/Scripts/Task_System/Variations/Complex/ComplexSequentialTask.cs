@@ -21,7 +21,9 @@ namespace Tasks
 
         protected override void OnEnable()
         {
+            base.OnEnable();
             currentTaskIndex = 0;
+            TaskInterface_Type = typeof(SequentialTaskInterface);
         }
 
         public override TaskStatus Check()

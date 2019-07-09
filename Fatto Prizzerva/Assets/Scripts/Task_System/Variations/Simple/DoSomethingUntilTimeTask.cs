@@ -14,6 +14,7 @@ namespace Tasks
         {
             base.OnEnable();
             currentTime = 0;        // for some reason, if i do not give current time a value in the ONENABLE method it start with a value of 7xxx,xxx with is a bit odd
+            TaskInterface_Type = typeof(DoSomethingUntilTimeTask);
         }
 
         public override void Tick(float _deltaTime)

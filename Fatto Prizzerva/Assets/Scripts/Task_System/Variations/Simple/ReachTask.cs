@@ -18,6 +18,11 @@ namespace Tasks
         [Header("Control")]
         [SerializeField] float targetRadius = 0.1f;         // margen de error para el calculo de la distancia al objetivo
 
+        protected override void OnEnable()
+        {
+            base.OnEnable();
+            TaskInterface_Type = typeof(ReachTaskInterface);
+        }
 
         public override void Setup(TasksBlackboard _blackboard)
         {

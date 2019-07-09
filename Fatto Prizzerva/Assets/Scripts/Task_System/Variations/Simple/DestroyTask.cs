@@ -18,11 +18,14 @@ namespace Tasks
             base.Setup(_blackboard);
         }
 
+        
 
         protected override void OnEnable()
         {
             base.OnEnable();
             isObjectDestroyed = false;
+            TaskInterface_Type = typeof(DestroyTaskInterface);
+
         }
 
         public override TaskStatus Check()

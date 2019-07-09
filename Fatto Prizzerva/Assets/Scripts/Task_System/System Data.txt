@@ -4,13 +4,18 @@
 
 [BUGS]
 - A task can NOT be assigned on more than one task (as simple task and as part of a complex task)
-- The setup function on the task manager should be recursive to take in consideration the infinite levels of each task
-IF YOU DONT WANT TO MAKE IT RECURSIVE YOU COULD USE A BLACKBOARD FOR THE TASKS DATA TO MAKE THEM ACCES IT ON THE SETUP
 - You need to find an easily scalable way of making or the tasks know if the target did what it expected or the player to comunicate with the tasks
 - Make each task to know whith tipe of task interface should use in order to create them withous using as many ifs
 
 [PREGUNTAS PARA GUIM]
 - Necesito saber todas las tareas que habra en el juego (o al menos las que se esperan pero bien explicadas tanto en cuanto a que las cumple y qu ehacen que fallen)
+	- No sufrir daño
+	- Moverte x casillas
+	- ...
+	- limite de movimientos
 - Necesito saber que recompensas se dan con las tareas que dan recompensa al ser completadas (¿Solo el playerCharacter recibe recompensa?)
+	- en el script
 - Caracteristicas de todos los estilos que apareceran en el juego (me refeiro a las interfaces de juego) Ej: Titulo principal (color x, tamaño tal ...), Texto de
 enfasis (...)
+	- 
+

@@ -222,6 +222,10 @@ namespace Tasks
             tasksCanvasController.AddTaskToCanvas(_task);
             tasksCanvasController.UpdatetaskStatus(_task);
 
+            System.Type taskType = _task.GetType();
+
+            Debug.LogError(taskType);
+
             // le pasamos los datos que pueda necesitar
             if (_task is ReachTask)
                 (_task as ReachTask).SetTaskData(_taskInitializationData);

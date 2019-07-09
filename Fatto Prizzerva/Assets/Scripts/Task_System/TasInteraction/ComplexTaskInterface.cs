@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System;
 
 
 namespace Tasks
@@ -25,30 +26,19 @@ namespace Tasks
                 {
                     // FOR EVERY TASK INTO THE COMPLEX TASK (at the moment just one level of deph) we create an interface to set them up)
                     ComplexTask _complexTargetTask = (TargetTask as ComplexTask);
+                    Type type; 
 
                     foreach (Task childTask in _complexTargetTask.GetTasksList())
                     {
-                        if (childTask is ReachTask)
-                        {
-                            requiredInterfaces.Add(this.gameObject.AddComponent<ReachTaskInterface>());
-                        }
-                        else if (childTask is DestroyTask)
-                        {
-                            requiredInterfaces.Add(this.gameObject.AddComponent<DestroyTaskInterface>());
-                        }
-                        else if (childTask is DoSomethingUntilTimeTask)
-                        {
-                            requiredInterfaces.Add(this.gameObject.AddComponent<DoUntilTimeInterface>());
-                        }
-                        else if (childTask is DoSomethingBeforeTimeTask)
-                        {
-                            requiredInterfaces.Add(this.gameObject.AddComponent<DoBeforeTimeInterface>());
-                        }
+                        type = childTask.TaskInterface_Type;
+
+                        if (type != null)
+                            requiredInterfaces.Add(gameObject.AddComponent(type) as TasKInterface);
                         else
-                        {
-                            Debug.LogError("COMPLEX TASK INTERFACE: This complex task does have a task without a interface");
-                        }
+                            Debug.LogError("COMPLEX TASK INTERFACE: A type of interface ouuld not be found");
+
                     }
+
                 }
 
             } else
@@ -75,7 +65,6 @@ namespace Tasks
             foreach (TasKInterface childTaskInterface in requiredInterfaces)
             {
                 TasksManager.Instance.SetupTask(childTaskInterface.TargetTask,false);
-
             }
 
             TasksManager.Instance.SetupTask(TargetTask);

@@ -17,6 +17,12 @@ namespace Tasks
     public class ComplexRandomTask : ComplexTask
     {
 
+        protected override void OnEnable()
+        {
+            base.OnEnable();
+            TaskInterface_Type = typeof(ComplexTaskInterface);
+        }
+
         public override TaskStatus Check()
         {
 

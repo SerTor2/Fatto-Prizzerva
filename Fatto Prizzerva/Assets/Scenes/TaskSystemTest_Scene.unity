@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.44657898, g: 0.4964133, b: 0.5748178, a: 1}
+  m_IndirectSpecularColor: {r: 0.44657826, g: 0.49641263, b: 0.57481676, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -701,13 +701,6 @@ GameObject:
   - component: {fileID: 895371046}
   - component: {fileID: 895371047}
   - component: {fileID: 895371051}
-  - component: {fileID: 895371050}
-  - component: {fileID: 895371049}
-  - component: {fileID: 895371048}
-  - component: {fileID: 895371055}
-  - component: {fileID: 895371054}
-  - component: {fileID: 895371053}
-  - component: {fileID: 895371052}
   m_Layer: 0
   m_Name: PseudoPlayer
   m_TagString: Player
@@ -757,48 +750,6 @@ MonoBehaviour:
   targetTask: {fileID: 11400000, guid: 625dfed1b075f654c817ca2f677a8ea2, type: 2}
   objectToFollow: {fileID: 895371044}
   targetObject: {fileID: 329330119}
---- !u!114 &895371048
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 895371044}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 419c8cf2e96ca6947883d56cf319161b, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  targetTask: {fileID: 0}
-  objectToDestroy: {fileID: 0}
---- !u!114 &895371049
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 895371044}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 419c8cf2e96ca6947883d56cf319161b, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  targetTask: {fileID: 0}
-  objectToDestroy: {fileID: 0}
---- !u!114 &895371050
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 895371044}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 419c8cf2e96ca6947883d56cf319161b, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  targetTask: {fileID: 0}
-  objectToDestroy: {fileID: 0}
 --- !u!114 &895371051
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -811,63 +762,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d78f6c072823197418a0c382024079e9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  targetTask: {fileID: 11400000, guid: 736381cdd8b9a884aac81fdc9871e9f9, type: 2}
---- !u!114 &895371052
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 895371044}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 419c8cf2e96ca6947883d56cf319161b, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
   targetTask: {fileID: 0}
-  objectToDestroy: {fileID: 0}
---- !u!114 &895371053
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 895371044}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 419c8cf2e96ca6947883d56cf319161b, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  targetTask: {fileID: 0}
-  objectToDestroy: {fileID: 0}
---- !u!114 &895371054
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 895371044}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 419c8cf2e96ca6947883d56cf319161b, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  targetTask: {fileID: 0}
-  objectToDestroy: {fileID: 0}
---- !u!114 &895371055
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 895371044}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 419c8cf2e96ca6947883d56cf319161b, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  targetTask: {fileID: 0}
-  objectToDestroy: {fileID: 0}
 --- !u!1 &1008646103
 GameObject:
   m_ObjectHideFlags: 0
