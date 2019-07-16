@@ -38,7 +38,7 @@ public class EnemieBasic : MonoBehaviour
 
     public bool MoveDirectionHit(Vector3 _direction, float _damage)
     {
-        if (_damage <= 10)
+        if (_damage <= 1)
             return false;
         else
         {

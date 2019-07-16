@@ -11,6 +11,9 @@ GameObject:
   - component: {fileID: 7471284608171117891}
   - component: {fileID: 7471284608171117888}
   - component: {fileID: 201859387920961851}
+  - component: {fileID: 604154517}
+  - component: {fileID: 604154518}
+  - component: {fileID: 1464645568}
   m_Layer: 0
   m_Name: Player
   m_TagString: Untagged
@@ -99,6 +102,53 @@ Animator:
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorControllerStateOnDisable: 0
+--- !u!135 &604154517
+SphereCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7471284608171117916}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_Enabled: 0
+  serializedVersion: 2
+  m_Radius: 0.5685992
+  m_Center: {x: 0.15039837, y: 0.16039266, z: 0.11859374}
+--- !u!114 &604154518
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7471284608171117916}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: be3676e7ebb10034cadd9d49d3cb702c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  player: {fileID: 7471284608528957259}
+  costStaminaPerPunch: 5
+  speedPunch: 3
+  damageBase: 2
+  timerDamage: 0.15
+  colliderPunch: {fileID: 604154517}
+--- !u!114 &1464645568
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7471284608171117916}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7888468516534f042b416af42bdfdcb0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  player: {fileID: 7471284608528957259}
+  characterController: {fileID: 7471284608528957256}
+  damageBase: 2
+  colliderPunch: {fileID: 604154517}
 --- !u!1 &7471284608528957254
 GameObject:
   m_ObjectHideFlags: 0
@@ -110,7 +160,12 @@ GameObject:
   - component: {fileID: 7471284608528957257}
   - component: {fileID: 7471284608528957259}
   - component: {fileID: 7471284608528957256}
-  - component: {fileID: 4661200939958140038}
+  - component: {fileID: 1793646201}
+  - component: {fileID: 5648913592169551215}
+  - component: {fileID: 120277126789608389}
+  - component: {fileID: 5426443396405995202}
+  - component: {fileID: 8003491913502437916}
+  - component: {fileID: 1884834215058353478}
   m_Layer: 0
   m_Name: Player
   m_TagString: Player
@@ -125,14 +180,14 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7471284608528957254}
-  m_LocalRotation: {x: 0.7071068, y: -0, z: -0, w: 0.7071068}
+  m_LocalRotation: {x: 0.7071068, y: 0, z: 0, w: 0.70710677}
   m_LocalPosition: {x: 0, y: 1.41, z: 0}
   m_LocalScale: {x: 1.2, y: 1.2, z: 1.2}
   m_Children:
   - {fileID: 7471284608171117891}
   m_Father: {fileID: 0}
   m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 90.00001, y: 0, z: 0}
 --- !u!114 &7471284608528957259
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -154,19 +209,22 @@ MonoBehaviour:
   layerMask:
     serializedVersion: 2
     m_Bits: 512
+  punch: {fileID: 604154518}
+  moving: {fileID: 120277126789608389}
+  run: {fileID: 8003491913502437916}
+  punchRunning: {fileID: 5426443396405995202}
+  punchFly: {fileID: 604154518}
+  knockBack: {fileID: 1884834215058353478}
   normalSpeed: 7
-  canvasPlayer: {fileID: 0}
-  maxStamina: 100
-  costStaminaPerPunch: 2
-  costStaminaPerRunningSecond: 5
-  recoverStaminaRunning: 0
-  maxSpeed: 12
-  incrementSpeedSecond: 6
-  decreseSpeedSecond: 15
-  multiplyStaminaPerSpeed: 0.7
-  resistenceToGirRunning: 30
+  speed: 21
+  recoverStamina: 0
   damageBase: 2
+  currentTimePunch: 0
+  currentTimeState: 0
   spriteRenderer: {fileID: 7471284608171117888}
+  anim: {fileID: 201859387920961851}
+  children: {fileID: 7471284608171117916}
+  stateMachine: {fileID: 5648913592169551215}
 --- !u!143 &7471284608528957256
 CharacterController:
   m_ObjectHideFlags: 0
@@ -185,16 +243,96 @@ CharacterController:
   m_SkinWidth: 0.08
   m_MinMoveDistance: 0.001
   m_Center: {x: 0, y: 0, z: 0}
---- !u!135 &4661200939958140038
-SphereCollider:
+--- !u!114 &1793646201
+MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7471284608528957254}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 1
-  m_Enabled: 0
-  serializedVersion: 2
-  m_Radius: 0.7
-  m_Center: {x: 0, y: 0, z: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d0bbf7cc230ace74b82294b61486c528, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  currentStamina: 100
+  maxStamina: 100
+  multiplyStaminaPerSpeed: 1
+  canvasPlayer: {fileID: 0}
+--- !u!114 &5648913592169551215
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7471284608528957254}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a9ae634992e8c694cab7298506a35fd9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  currentState: {fileID: 0}
+--- !u!114 &120277126789608389
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7471284608528957254}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a01caac85c676db43b9f755bb121f19f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  player: {fileID: 7471284608528957259}
+  gravity: 15
+  lastDirection: {x: 0, y: 1, z: 0}
+--- !u!114 &5426443396405995202
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7471284608528957254}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d9a28047c88436842aa91eea87771f66, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  player: {fileID: 7471284608528957259}
+  costStaminaPerPunch: 5
+  run: {fileID: 8003491913502437916}
+--- !u!114 &8003491913502437916
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7471284608528957254}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 79b975726e08bc642879aa7defa29fdb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  player: {fileID: 7471284608528957259}
+  costStaminaPerRunningSecond: 5
+  maxSpeed: 10
+  incrementSpeedSecond: 2
+  decreseSpeedSecond: 10
+  resistenceToGirRunning: 30
+  toMove: {x: 0, y: 0, z: 0}
+  moving: {fileID: 120277126789608389}
+  anim: {fileID: 201859387920961851}
+--- !u!114 &1884834215058353478
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7471284608528957254}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1bbfa7acb228c324391440caeee4ccc2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  player: {fileID: 7471284608528957259}

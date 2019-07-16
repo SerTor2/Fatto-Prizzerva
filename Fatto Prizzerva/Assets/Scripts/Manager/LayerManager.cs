@@ -5,12 +5,14 @@ using UnityEngine;
 public class LayerManager : MonoBehaviour
 {
     public PlayerScript player;
+    private MoveScript moving;
     public List<Floors> floors;
     private float posYPlayer;
     // Start is called before the first frame update
     void Start()
     {
         player = GameObject.FindGameObjectWithTag("Player").GetComponent<PlayerScript>();
+        moving = player.moving.GetComponent<MoveScript>();
         posYPlayer = player.gameObject.transform.position.y;
     }
 
@@ -31,7 +33,7 @@ public class LayerManager : MonoBehaviour
             }
 
             if(player.GetLayerPlayer() != maxLayer)
-                player.MoveCameraUpLayer();
+                moving.MoveCameraUpLayer();
 
 
             player.SetLayerPlayer(maxLayer);

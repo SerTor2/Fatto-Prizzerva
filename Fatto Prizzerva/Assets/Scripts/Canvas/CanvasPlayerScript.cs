@@ -12,8 +12,8 @@ public class CanvasPlayerScript : MonoBehaviour
 
     public void ChangeStamina()
     {
-        progresBarStamina.fillAmount = player.GetCurrentStamina() / player.GetMaxStamina();
-        progresBarStaminaToRecover.fillAmount = (player.GetCurrentStamina() + player.GetCurrentRecoverStamina()) / player.GetMaxStamina();
+        progresBarStamina.fillAmount = player.stamina.Stamina / player.stamina.MaxStamina;
+        progresBarStaminaToRecover.fillAmount = (player.stamina.Stamina + player.stamina.CurrentRegenStamina) / player.stamina.MaxStamina;
     }
 
 }

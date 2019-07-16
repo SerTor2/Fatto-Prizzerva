@@ -4,94 +4,95 @@ using UnityEngine;
 
 public class PlayerScript : MonoBehaviour
 {
-    public enum State { MOVING, PUNCHING, RUNING, PUNCHRUNNING, KNOCKBACK, FLYINGKICK, HABILITY };
+    public enum State { MOVING, PUNCHING, RUNING, PUNCHRUNNING, KNOCKBACK, FLYINGKICK, HABILITY, INSIDEPLANT };
     public State currentState = State.MOVING;
-    [SerializeField] private KeyCode upKey = KeyCode.W;
-    [SerializeField] private KeyCode downKey = KeyCode.S;
-    [SerializeField] private KeyCode rightKey = KeyCode.D;
-    [SerializeField] private KeyCode leftKey = KeyCode.A;
-    [SerializeField] private KeyCode runKey = KeyCode.LeftShift;
+    public KeyCode upKey = KeyCode.W;
+    public KeyCode downKey = KeyCode.S;
+    public KeyCode rightKey = KeyCode.D;
+    public KeyCode leftKey = KeyCode.A;
+    public KeyCode runKey = KeyCode.LeftShift;
 
     [SerializeField] private LayerMask layerMask;
 
+    [SerializeField] public IEstaminable stamina;
 
-    [SerializeField] private float normalSpeed = 7;
-    [SerializeField] private CanvasPlayerScript canvasPlayer;
-    private float speed;
-    public float maxStamina = 100;
-    private float currentStamina;
-    public float costStaminaPerPunch = 2;
-    public float costStaminaPerRunningSecond = 5;
-    public float recoverStaminaRunning = 0;
-    public float maxSpeed = 10f;
-    public float incrementSpeedSecond = 2f;
-    public float decreseSpeedSecond = 10f;
-    public float multiplyStaminaPerSpeed = 1f;
-    public float resistenceToGirRunning = 30;
+    #region STATES
+    public BaseState punch;
+    public BaseState moving;
+    public BaseState run;
+    public BaseState punchRunning;
+    public BaseState punchFly;
+    public BaseState knockBack;
+
+    private PunchScript punchScript;
+    private MoveScript moveScript;
+    private RunScript runScript;
+    private PunchRunning punchRunningScript;
+    private PunchFly punchFlyScript;
+    #endregion
+    public float normalSpeed = 7;
+    public float speed;
+    public float recoverStamina = 0;
     public float damageBase = 2;
-    private float currentTimePunch = 0;
+    public float currentTimePunch = 0;
     private float coolDownPunch = 0.75f;
-    private float currentTimeState = 0;
+    public float currentTimeState = 0;
     private Vector3 toMove = Vector3.zero;
     private Vector3 lastDirection = Vector3.up;
     private bool running = false;
     private bool onGround = false;
     private float gravity = 30;
     private float verticalSpeed = 0;
-    private GameObject myCamera;
     private float distanceWithCamera;
     private int layer = 0;
-    private SphereCollider colliderPunch;
+
+    private float speedKnockBack = 0;
+    private float timeKnockBack = 0;
+    private Vector3 directionKnockBack;
+
+
 
     private CharacterController characterController;
     public SpriteRenderer spriteRenderer;
     public Animator anim;
     private Color startColor;
+    public GameObject children;
+    public StateMachine stateMachine;
     // Start is called before the first frame update
     void Awake()
     {
+        stamina = GetComponent<IEstaminable>();
         characterController = GetComponent<CharacterController>();
         startColor = spriteRenderer.color;
-        currentStamina = maxStamina;
         speed = normalSpeed;
-        myCamera = Camera.main.gameObject;
-        distanceWithCamera =  myCamera.transform.position.y - gameObject.transform.position.y;
-        colliderPunch = GetComponent<SphereCollider>();
+
+        punch = children.GetComponent<PunchScript>();
+        punchFly = children.GetComponent<PunchFly>();
+       
+        punchScript = punch.GetComponent<PunchScript>();
+        moveScript = moving.GetComponent<MoveScript>();
+        runScript = run.GetComponent<RunScript>();
+        punchRunningScript = punchRunning.GetComponent<PunchRunning>();
+        punchFlyScript = punchFly.GetComponent<PunchFly>();
     }
 
     // Update is called once per frame
     void Update()
     {
-        switch(currentState)
+        CheckVariablesUntilMoving();
+        stateMachine.ExecuteState();
+        switch (currentState)
         {
             case State.MOVING:
-                Move();
-                CheckVariablesUntilMoving();
+                stamina.RegenStamina();
                 break;
             case State.PUNCHING:
-                Move();
-                currentTimeState += Time.deltaTime;
-                if (currentTimeState >= 0.3f)
-                    ChangeState(State.MOVING);
-
                 break;
             case State.RUNING:
-                CheckVariablesUntilMoving();
-                if (currentStamina <= 0)
-                    ChangeState(State.MOVING);
-                Move();
                 break;
             case State.PUNCHRUNNING:
-                currentTimeState += Time.deltaTime;
-                PunchRunning();
-                if (currentTimeState >= 0.15f)
-                    ChangeState(State.MOVING);
                 break;
             case State.FLYINGKICK:
-                currentTimeState += Time.deltaTime;
-                MoveFlyKick();
-                if (currentTimeState >= 0.15f)
-                    ChangeState(State.MOVING);
                 break;
             case State.KNOCKBACK:
                 break;
@@ -99,213 +100,56 @@ public class PlayerScript : MonoBehaviour
                 break;
         }
         CheckStats();
-        CheckGravity();
     }
 
     public void ChangeState(State newState)
     {
-        switch (currentState)
-        {
-            case State.MOVING:
-                break;
-            case State.PUNCHING:
-                spriteRenderer.color = startColor;
-                speed = normalSpeed;
-                currentTimePunch += Time.deltaTime;
-                colliderPunch.enabled = false;
-
-                break;
-            case State.RUNING:
-                running = false;
-                anim.SetBool("Running", running);
-                break;
-            case State.PUNCHRUNNING:
-                running = false;
-                spriteRenderer.color = startColor;
-                currentTimePunch += Time.deltaTime;
-                speed = normalSpeed;
-                colliderPunch.enabled = false;
-
-                break;
-            case State.KNOCKBACK:
-                break;
-            case State.FLYINGKICK:
-                spriteRenderer.color = startColor;
-                speed = normalSpeed;
-                colliderPunch.enabled = false;
-
-                break;
-            case State.HABILITY:
-                break;
-        }
 
         switch (newState)
         {
             case State.MOVING:
-                currentTimeState = 0;
+                stateMachine.ChangeState(moving);
                 break;
             case State.PUNCHING:
-                anim.SetTrigger("Fist");
-                currentStamina -= costStaminaPerPunch;
-                canvasPlayer.ChangeStamina();
-                currentTimeState = 0;
-                speed = normalSpeed / 2;
-                colliderPunch.enabled = true;
+                stateMachine.ChangeState(punch);
                 break;
             case State.RUNING:
                 running = true;
-                anim.SetBool("Running", running);
-                currentTimeState = 0;
+                stateMachine.ChangeState(run);
                 break;
             case State.PUNCHRUNNING:
                 running = true;
-                spriteRenderer.color = Color.red;
-                currentStamina -= costStaminaPerPunch * (speed - normalSpeed);
-                canvasPlayer.ChangeStamina();
-                currentTimeState = 0;
-                speed = normalSpeed * 2;
-                colliderPunch.enabled = true;
+                stateMachine.ChangeState(punchRunning);
 
                 break;
             case State.KNOCKBACK:
-                currentTimeState = 0;
+                stateMachine.ChangeState(knockBack);
                 break;
             case State.FLYINGKICK:
-                speed = normalSpeed * 3f;
-                spriteRenderer.color = Color.red;
-                currentTimeState = 0;
-                colliderPunch.enabled = true;
+                stateMachine.ChangeState(punchFly);
 
                 break;
             case State.HABILITY:
-                currentTimeState = 0;
                 break;
         }
 
         currentState = newState;
     }
 
-    private void Move()
-    {
-        toMove = Vector3.zero;
-        if (Input.GetKey(upKey))
-            toMove += myCamera.transform.up;
-        if (Input.GetKey(downKey))
-            toMove -= myCamera.transform.up;
-        if (Input.GetKey(rightKey))
-            toMove += myCamera.transform.right;
-        if (Input.GetKey(leftKey))
-            toMove -= myCamera.transform.right;
-
-        toMove = new Vector3(toMove.x, 0, toMove.z);
-        toMove.Normalize();
-        if (toMove.magnitude > 0)
-        {
-            if (running)
-            {
-                float magnitudVector = (lastDirection - toMove).magnitude;
-                if(magnitudVector == 0)
-                {
-                    float value = Time.deltaTime * costStaminaPerRunningSecond * (speed - normalSpeed) * multiplyStaminaPerSpeed;
-                    currentStamina -= value;
-                    recoverStaminaRunning += value;
-                    canvasPlayer.ChangeStamina();
-                    if (speed < maxSpeed)
-                    {
-                        speed += Time.deltaTime * incrementSpeedSecond;
-                        if (speed > maxSpeed)
-                            speed = maxSpeed;
-                    }
-                }
-                else if(magnitudVector > 0 && magnitudVector < 1)
-                {
-                    toMove = (toMove / 30 + lastDirection).normalized;
-                    lastDirection = toMove;
-                    float secondvalue = Time.deltaTime * costStaminaPerRunningSecond * (speed - normalSpeed) * multiplyStaminaPerSpeed;
-                    currentStamina -= secondvalue;
-                    recoverStaminaRunning += secondvalue;
-                    canvasPlayer.ChangeStamina();
-                    if (speed > normalSpeed)
-                    {
-                        speed -= Time.deltaTime * incrementSpeedSecond / 4;
-                        if (speed > normalSpeed)
-                            speed = normalSpeed;
-                    }
-                }
-                else if(magnitudVector < 1.75f)
-                {
-                    toMove = (toMove / 30 + lastDirection).normalized;
-                    lastDirection = toMove;
-                    float secondvalue = Time.deltaTime * costStaminaPerRunningSecond * (speed - normalSpeed) * multiplyStaminaPerSpeed;
-                    currentStamina -= secondvalue;
-                    recoverStaminaRunning += secondvalue;
-                    canvasPlayer.ChangeStamina();
-                    if (speed > normalSpeed)
-                    {
-                        speed -= Time.deltaTime * incrementSpeedSecond / 2;
-                        if (speed > normalSpeed)
-                            speed = normalSpeed;
-                    }
-                }
-                else
-                {
-                    toMove = lastDirection;
-                    float otherValue = Time.deltaTime * costStaminaPerRunningSecond * (speed - normalSpeed) * multiplyStaminaPerSpeed;
-                    currentStamina -= otherValue;
-                    recoverStaminaRunning += otherValue;
-                    canvasPlayer.ChangeStamina();
-                    if (speed < maxSpeed)
-                    {
-                        speed += Time.deltaTime * incrementSpeedSecond;
-                        if (speed > maxSpeed)
-                            speed = maxSpeed;
-                    }
-                }
-
-            }
-            else lastDirection = toMove;
-            gameObject.transform.rotation = Quaternion.LookRotation(gameObject.transform.forward, toMove);
-
-        }
-        else
-        {
-            if (running)
-            {
-                toMove = lastDirection;
-                float otherValue = Time.deltaTime * costStaminaPerRunningSecond * (speed - normalSpeed) * multiplyStaminaPerSpeed;
-                currentStamina -= otherValue;
-                recoverStaminaRunning += otherValue;
-                canvasPlayer.ChangeStamina();
-                if (speed < maxSpeed)
-                {
-                    speed += Time.deltaTime * incrementSpeedSecond;
-                    if (speed > maxSpeed)
-                        speed = maxSpeed;
-                }
-            }
-        }
-
-        CollisionFlags collisionFlags = characterController.Move(toMove * Time.deltaTime * speed);
-    }
-
-    private void PunchRunning()
-    {
-        CollisionFlags collisionFlags = characterController.Move(toMove * Time.deltaTime * speed );
-    }
 
     private void CheckVariablesUntilMoving()
     {
-        if (Input.GetMouseButton(0) && CanPunch() && !running)
+        if (Input.GetMouseButton(0) && CanPunch() && currentState == State.MOVING)
         {
             ChangeState(State.PUNCHING);
             return;
         }
-        if (Input.GetKey(runKey) && !running && currentStamina > 2)
+        if (Input.GetKey(runKey) && currentState == State.MOVING && stamina.Stamina > 2)
         {
             ChangeState(State.RUNING);
             return;
         }
-        else if(Input.GetKeyUp(runKey))
+        else if (Input.GetKeyUp(runKey) && running)
             ChangeState(State.MOVING);
         if (Input.GetKey(runKey) && running && CanPunchRunning() && speed > normalSpeed + 1 && Input.GetMouseButton(0))
             ChangeState(State.PUNCHRUNNING);
@@ -317,47 +161,19 @@ public class PlayerScript : MonoBehaviour
 
     private bool CanPunch()
     {
-        return currentTimePunch == 0 && currentStamina >= costStaminaPerPunch;
+        return currentTimePunch == 0 && stamina.Stamina >= punchScript.costStaminaPerPunch && currentState == State.MOVING;
     }
 
     private bool CanPunchRunning()
     {
-        return currentStamina >= costStaminaPerPunch * (speed - normalSpeed);
-    }
-
-    public float GetMaxStamina()
-    {
-        return maxStamina;
-    }
-
-    public float GetCurrentStamina()
-    {
-        return currentStamina;
-    }
-
-    public float GetCurrentRecoverStamina()
-    {
-        return recoverStaminaRunning;
-    }
-
-    private void RecoverStamina()
-    {
-        float value = Time.deltaTime;
-        currentStamina += value;
-        recoverStaminaRunning -= value;
-
-        if (recoverStaminaRunning < 0)
-        {
-            currentStamina += recoverStaminaRunning;
-            recoverStaminaRunning = 0;
-        }
-        canvasPlayer.ChangeStamina();
-
+        return currentTimePunch == 0 && stamina.Stamina >= punchRunningScript.costStaminaPerPunch * (speed - normalSpeed) 
+            && currentState == State.RUNING;
     }
 
     private void CheckStats()
     {
-        if (currentTimePunch > 0 && currentState != State.PUNCHING)
+        if (currentTimePunch > 0 && currentState != State.PUNCHING && currentState != State.PUNCHRUNNING && 
+            currentState != State.FLYINGKICK)
         {
             currentTimePunch += Time.deltaTime;
             if (currentTimePunch >= coolDownPunch)
@@ -366,14 +182,14 @@ public class PlayerScript : MonoBehaviour
 
         if (!running)
         {
-            if (recoverStaminaRunning >= 0)
+            if (stamina.CurrentRegenStamina > 0)
             {
-                RecoverStamina();
+                stamina.RegenStamina();
             }
 
             if (speed > normalSpeed)
             {
-                speed -= Time.deltaTime * decreseSpeedSecond;
+                speed -= Time.deltaTime * runScript.decreseSpeedSecond;
                 if (speed < normalSpeed)
                     speed = normalSpeed;
             }
@@ -382,12 +198,12 @@ public class PlayerScript : MonoBehaviour
 
     private void OnControllerColliderHit(ControllerColliderHit hit)
     {
-        if(hit.gameObject.tag == "Enemie")
+        if (hit.gameObject.tag == "Enemie")
         {
             if (currentState == State.PUNCHING)
                 hit.gameObject.GetComponent<EnemieBasic>().MoveDirectionHit((hit.gameObject.transform.position - gameObject.transform.position).normalized, damageBase * speed);
             if (currentState == State.PUNCHRUNNING || currentState == State.FLYINGKICK)
-                hit.gameObject.GetComponent<EnemieBasic>().MoveDirectionHit((hit.gameObject.transform.position - gameObject.transform.position).normalized, damageBase * speed / 2);
+                hit.gameObject.GetComponent<EnemieBasic>().MoveDirectionHit((hit.gameObject.transform.position - gameObject.transform.position).normalized, damageBase * speed / 3F);
             ChangeState(State.MOVING);
         }
 
@@ -401,7 +217,7 @@ public class PlayerScript : MonoBehaviour
             if (currentState == State.PUNCHING)
                 other.gameObject.GetComponent<EnemieBasic>().MoveDirectionHit((other.gameObject.transform.position - gameObject.transform.position).normalized, damageBase * speed);
             if (currentState == State.PUNCHRUNNING || currentState == State.FLYINGKICK)
-                other.gameObject.GetComponent<EnemieBasic>().MoveDirectionHit((other.gameObject.transform.position - gameObject.transform.position).normalized, damageBase * speed / 2);
+                other.gameObject.GetComponent<EnemieBasic>().MoveDirectionHit((other.gameObject.transform.position - gameObject.transform.position).normalized, damageBase * speed / 3F);
             ChangeState(State.MOVING);
         }
     }
@@ -412,49 +228,49 @@ public class PlayerScript : MonoBehaviour
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
         if (Physics.Raycast(Camera.main.transform.position, ray.direction, out rayHit, 25, layerMask))
         {
-            if((rayHit.collider.transform.position - gameObject.transform.position).magnitude <= 3)
+            if ((rayHit.collider.transform.position - gameObject.transform.position).magnitude <= 3)
             {
                 if (rayHit.collider.gameObject.GetComponent<PlantaCatapulta>() != null)
                 {
+                    ChangeState(State.INSIDEPLANT);
                     rayHit.collider.gameObject.GetComponent<PlantaCatapulta>().EnterInThePlant(this);
                 }
 
             }
-            
+
         }
     }
 
-    public void StartFlyKick(Vector3 _direction)
+    public float ChangeSpeed(float _speed)
     {
-        lastDirection = _direction;
-        gameObject.transform.rotation = Quaternion.LookRotation(gameObject.transform.forward, _direction);
-        ChangeState(State.FLYINGKICK);
+        _speed = Mathf.Clamp(_speed, normalSpeed, runScript.maxSpeed);
+        speed = _speed;
+        return speed;
     }
 
-    private void CheckGravity()
+    public void StartKnockBack(float _damage, float _time, Vector3 _direction)
     {
-        verticalSpeed -= gravity * Time.deltaTime;
-        CollisionFlags collisionFlags = characterController.Move(new Vector3(0,verticalSpeed, 0) * Time.deltaTime);
-        if ((collisionFlags & CollisionFlags.Below) != 0)
-        {
-            onGround = false;
-        }
-        else
-            onGround = true;
-        if (onGround)
-            verticalSpeed = 0;
-
+        speedKnockBack = _damage;
+        timeKnockBack = _time;
+        directionKnockBack = _direction;
+        ChangeState(State.KNOCKBACK);
     }
 
-    public void MoveCameraUpLayer()
+    public void GetStatsKnockBack( out float _speed, out float _time, out Vector3 _direction)
     {
-        myCamera.gameObject.transform.position = new Vector3(myCamera.transform.position.x, gameObject.transform.position.y + distanceWithCamera, myCamera.transform.position.z);
-
+        _speed = speedKnockBack;
+        _time = timeKnockBack;
+        _direction = directionKnockBack;
     }
 
-    private void MoveFlyKick()
+    public void ResetSpeed()
     {
-        characterController.Move(lastDirection * Time.deltaTime * speed);
+        speed = normalSpeed;
+    }
+
+    public float GetSpeed()
+    {
+        return speed;
     }
 
     public void SetLayerPlayer(int _layer)
