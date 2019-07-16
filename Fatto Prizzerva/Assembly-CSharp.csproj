@@ -64,12 +64,14 @@
     <Compile Include="Assets\Scripts\Canvas\CanvasPlayerScript.cs" />
     <Compile Include="Assets\Scripts\Enemie\EnemieBasic.cs" />
     <Compile Include="Assets\Scripts\Enviroment\Floors.cs" />
-    <Compile Include="Assets\Scripts\Enviroment\PlantaCatapulta.cs" />
+    <Compile Include="Assets\Scripts\Enviroment\Plants\PlantaCatapulta.cs" />
+    <Compile Include="Assets\Scripts\Enviroment\Plants\PlantaTierra.cs" />
     <Compile Include="Assets\Scripts\Interfaces\IEstaminable.cs" />
     <Compile Include="Assets\Scripts\Manager\LayerManager.cs" />
     <Compile Include="Assets\Scripts\Player\PlayerScript.cs" />
     <Compile Include="Assets\Scripts\Player\StaminaScript.cs" />
     <Compile Include="Assets\Scripts\Player\States\BaseState.cs" />
+    <Compile Include="Assets\Scripts\Player\States\JumpScript.cs" />
     <Compile Include="Assets\Scripts\Player\States\KnockbackScript.cs" />
     <Compile Include="Assets\Scripts\Player\States\MoveScript.cs" />
     <Compile Include="Assets\Scripts\Player\States\PunchFly.cs" />

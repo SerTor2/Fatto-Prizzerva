@@ -33,7 +33,8 @@ public class MoveScript : BaseState
     // Update is called once per frame
     void Update()
     {
-        if(player.currentState != PlayerScript.State.INSIDEPLANT && player.currentState != PlayerScript.State.FLYINGKICK)
+        if(player.currentState != PlayerScript.State.INSIDEPLANT && player.currentState != PlayerScript.State.FLYINGKICK 
+            && player.currentState != PlayerScript.State.JUMPING && player.currentState != PlayerScript.State.PLANNING)
             CheckGravity();
     }
 

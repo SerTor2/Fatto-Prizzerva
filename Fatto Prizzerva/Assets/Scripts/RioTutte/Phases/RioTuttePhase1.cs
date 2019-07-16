@@ -20,8 +20,8 @@ public class RioTuttePhase1 : MonoBehaviour
     public void Execute()
     {
         stateMachine.ExecuteState();
-        if (Input.GetKey(KeyCode.Space))
-            ChangeState(State.DASH);
+        /*if (Input.GetKey(KeyCode.Space))
+            ChangeState(State.DASH);*/
     }
 
     public void ChangeState(State _newState)

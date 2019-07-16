@@ -4,13 +4,15 @@ using UnityEngine;
 
 public class PlayerScript : MonoBehaviour
 {
-    public enum State { MOVING, PUNCHING, RUNING, PUNCHRUNNING, KNOCKBACK, FLYINGKICK, HABILITY, INSIDEPLANT };
+    public enum State { MOVING, PUNCHING, RUNING, PUNCHRUNNING, KNOCKBACK, FLYINGKICK, HABILITY, INSIDEPLANT,
+        JUMPING, PLANNING };
     public State currentState = State.MOVING;
     public KeyCode upKey = KeyCode.W;
     public KeyCode downKey = KeyCode.S;
     public KeyCode rightKey = KeyCode.D;
     public KeyCode leftKey = KeyCode.A;
     public KeyCode runKey = KeyCode.LeftShift;
+    public KeyCode jumpKey = KeyCode.Space;
 
     [SerializeField] private LayerMask layerMask;
 
@@ -23,6 +25,8 @@ public class PlayerScript : MonoBehaviour
     public BaseState punchRunning;
     public BaseState punchFly;
     public BaseState knockBack;
+    public BaseState jumping;
+    public BaseState planning;
 
     private PunchScript punchScript;
     private MoveScript moveScript;
@@ -37,7 +41,7 @@ public class PlayerScript : MonoBehaviour
     public float currentTimePunch = 0;
     private float coolDownPunch = 0.75f;
     public float currentTimeState = 0;
-    private Vector3 toMove = Vector3.zero;
+    public Vector3 toMove = Vector3.zero;
     private Vector3 lastDirection = Vector3.up;
     private bool running = false;
     private bool onGround = false;
@@ -48,6 +52,11 @@ public class PlayerScript : MonoBehaviour
 
     private float speedKnockBack = 0;
     private float timeKnockBack = 0;
+
+    private float forceJump = 0;
+    private PlantaTierra plantaTierra;
+    private bool planningPlant = false;
+
     private Vector3 directionKnockBack;
 
 
@@ -131,6 +140,13 @@ public class PlayerScript : MonoBehaviour
                 break;
             case State.HABILITY:
                 break;
+
+            case State.JUMPING:
+                stateMachine.ChangeState(jumping);
+                break;
+
+            case State.PLANNING:
+                break;
         }
 
         currentState = newState;
@@ -151,6 +167,10 @@ public class PlayerScript : MonoBehaviour
         }
         else if (Input.GetKeyUp(runKey) && running)
             ChangeState(State.MOVING);
+
+        if (Input.GetKeyDown(jumpKey) && currentState == State.MOVING)
+            StartJump();
+
         if (Input.GetKey(runKey) && running && CanPunchRunning() && speed > normalSpeed + 1 && Input.GetMouseButton(0))
             ChangeState(State.PUNCHRUNNING);
 
@@ -281,5 +301,48 @@ public class PlayerScript : MonoBehaviour
     public int GetLayerPlayer()
     {
         return layer;
+    }
+
+    public void StartJump()
+    {
+        if(plantaTierra != null)
+        {
+            planningPlant = plantaTierra.planningPlant;
+            if(planningPlant)
+            {
+                toMove = toMove * speed / normalSpeed;
+            }
+            else
+            {
+                toMove = plantaTierra.direction;
+            }
+            ChangeState(State.JUMPING);
+        }
+    }
+
+    public float GetForceJump()
+    {
+        return forceJump;
+    }
+
+    public bool GetPlanningPlant()
+    {
+        return planningPlant;
+    }
+
+    public float GetGravity()
+    {
+        return gravity;
+    }
+
+    public void SetPlantaTierra(PlantaTierra _planta)
+    {
+        plantaTierra = _planta;
+        if (plantaTierra != null)
+        {
+            forceJump = plantaTierra.forceJump;
+        }
+        else
+            forceJump = 0;
     }
 }

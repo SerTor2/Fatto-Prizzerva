@@ -1400,6 +1400,8 @@ GameObject:
   - component: {fileID: 1146461662}
   - component: {fileID: 1146461661}
   - component: {fileID: 1146461660}
+  - component: {fileID: 1146461665}
+  - component: {fileID: 1146461664}
   m_Layer: 0
   m_Name: PlantaTierra
   m_TagString: Untagged
@@ -1479,6 +1481,34 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 10
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1146461664
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1146461659}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e302de980cadb5942967f5cc8217da6d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  forceJump: 10
+  direction: {x: 0, y: 0, z: 1}
+  planningPlant: 0
+--- !u!65 &1146461665
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1146461659}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 1, y: 9.662544, z: 1}
+  m_Center: {x: 0, y: 4.3312716, z: 0}
 --- !u!1 &1395497845
 GameObject:
   m_ObjectHideFlags: 0
@@ -2173,70 +2203,5 @@ PrefabInstance:
       propertyPath: canvasPlayer
       value: 
       objectReference: {fileID: 31344613}
-    - target: {fileID: 1884834215058353478, guid: 6ff83ad9d3c8d694489d00331837badf,
-        type: 3}
-      propertyPath: decreseSpeed
-      value: 20
-      objectReference: {fileID: 0}
-    - target: {fileID: 7471284608171117891, guid: 6ff83ad9d3c8d694489d00331837badf,
-        type: 3}
-      propertyPath: m_LocalRotation.x
-      value: -0.14038259
-      objectReference: {fileID: 0}
-    - target: {fileID: 7471284608171117891, guid: 6ff83ad9d3c8d694489d00331837badf,
-        type: 3}
-      propertyPath: m_LocalRotation.y
-      value: -0.22497596
-      objectReference: {fileID: 0}
-    - target: {fileID: 7471284608171117891, guid: 6ff83ad9d3c8d694489d00331837badf,
-        type: 3}
-      propertyPath: m_LocalRotation.z
-      value: 0.6901819
-      objectReference: {fileID: 0}
-    - target: {fileID: 7471284608171117891, guid: 6ff83ad9d3c8d694489d00331837badf,
-        type: 3}
-      propertyPath: m_LocalRotation.w
-      value: 0.67329603
-      objectReference: {fileID: 0}
-    - target: {fileID: 7471284608171117891, guid: 6ff83ad9d3c8d694489d00331837badf,
-        type: 3}
-      propertyPath: m_LocalPosition.y
-      value: 0.07200029
-      objectReference: {fileID: 0}
-    - target: {fileID: 7471284608171117891, guid: 6ff83ad9d3c8d694489d00331837badf,
-        type: 3}
-      propertyPath: m_LocalPosition.z
-      value: -0.0000000062088166
-      objectReference: {fileID: 0}
-    - target: {fileID: 7471284608171117891, guid: 6ff83ad9d3c8d694489d00331837badf,
-        type: 3}
-      propertyPath: m_LocalEulerAnglesHint.x
-      value: 6.9790006
-      objectReference: {fileID: 0}
-    - target: {fileID: 7471284608171117891, guid: 6ff83ad9d3c8d694489d00331837badf,
-        type: 3}
-      propertyPath: m_LocalEulerAnglesHint.y
-      value: -30.029001
-      objectReference: {fileID: 0}
-    - target: {fileID: 7471284608171117891, guid: 6ff83ad9d3c8d694489d00331837badf,
-        type: 3}
-      propertyPath: m_LocalEulerAnglesHint.z
-      value: 89.545006
-      objectReference: {fileID: 0}
-    - target: {fileID: 120277126789608389, guid: 6ff83ad9d3c8d694489d00331837badf,
-        type: 3}
-      propertyPath: gravity
-      value: 20
-      objectReference: {fileID: 0}
-    - target: {fileID: 8003491913502437916, guid: 6ff83ad9d3c8d694489d00331837badf,
-        type: 3}
-      propertyPath: incrementSpeedSecond
-      value: 10
-      objectReference: {fileID: 0}
-    - target: {fileID: 8003491913502437916, guid: 6ff83ad9d3c8d694489d00331837badf,
-        type: 3}
-      propertyPath: maxSpeed
-      value: 21
-      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 6ff83ad9d3c8d694489d00331837badf, type: 3}
